@@ -46,7 +46,6 @@ if (top.frames.length!=0)
 					<span style="margin-left:5px;margin-right:5px;">
 						<a href='<?php echo $CLIENT_ROOT; ?>/sitemap.php'>Sitemap</a>
 					</span>
-
 				</div>
 				<ul id="hor_dropdown">
 					<li>
@@ -61,18 +60,15 @@ if (top.frames.length!=0)
 							<li>
 								<a href="<?php echo $CLIENT_ROOT; ?>/collections/map/index.php" target="_blank">Map Search</a>
 							</li>
-<li>
-                                                                <a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist" ><?php echo (isset($LANG['H_DYN_LISTS'])?$LANG['H_DYN_LISTS']:'Dynamic Species List'); ?></a>
-                                                        </li>
-
 							<li>
-								<a href="/collections/exsiccati/index.php" >Exsiccati</a>
+								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist" ><?php echo (isset($LANG['H_DYN_LISTS'])?$LANG['H_DYN_LISTS']:'Dynamic Species List'); ?></a>
 							</li>
-
-                                                        <li>
-                                                                <a href="<?php echo $CLIENT_ROOT; ?>/taxa/taxonomy/taxonomydynamicdisplay.php" ><?php echo (isset($LANG['H_TAXONOMIC_EXPLORER'])?$LANG['H_TAXONOMIC_EXPLORER']:'Taxonomic Explorer'); ?></a>
-                                                        </li>
-
+							<li>
+								<a href="<?php echo $CLIENT_ROOT; ?>/collections/exsiccati/index.php" >Exsiccati</a>
+							</li>
+							<li>
+								<a href="<?php echo $CLIENT_ROOT; ?>/taxa/taxonomy/taxonomydynamicdisplay.php" ><?php echo (isset($LANG['H_TAXONOMIC_EXPLORER'])?$LANG['H_TAXONOMIC_EXPLORER']:'Taxonomic Explorer'); ?></a>
+							</li>
 						</ul>
 					</li>
 					<li>
@@ -86,41 +82,33 @@ if (top.frames.length!=0)
 							</li>
 						</ul>
 					</li>
-
-
-                                        <li>
-                                                <a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php" ><?php echo (isset($LANG['H_INVENTORIES'])?$LANG['H_INVENTORIES']:'Species Checklists'); ?></a>
-                                                <ul>
-                                                        <li>
-                                                                <a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=1"><?php echo (isset($LANG['H_NORTH_AMER'])?$LANG['H_NORTH_AMER']:'North America'); ?></a>
-                                                        </li>
-                                                </ul>
-                                        </li>
-
 					<li>
-						<a href="/collections/specprocessor/crowdsource/index.php" >Crowdsource</a>
+						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php" ><?php echo (isset($LANG['H_INVENTORIES'])?$LANG['H_INVENTORIES']:'Species Checklists'); ?></a>
+						<ul>
+							<li>
+								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=1"><?php echo (isset($LANG['H_NORTH_AMER'])?$LANG['H_NORTH_AMER']:'North America'); ?></a>
+							</li>
+						</ul>
 					</li>
-
-
-                                        <li>
-                                                <a href="#" ><?php echo (isset($LANG['H_CONTACTS'])?$LANG['H_CONTACTS']:'Contacts'); ?></a>
-                                                <ul>
-                                                        <li>
-                                                                <a href="<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php" ><?php echo (isset($LANG['H_PARTNERS'])?$LANG['H_PARTNERS']:'Partners'); ?></a>
-                                                        </li>
-                                                        <!--
-                                                        <li>
-                                                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/contacts.php" ><?php echo (isset($LANG['H_CONTACTS'])?$LANG['H_CONTACTS']:'Contacts'); ?></a>
-                                                        </li>
-                                                        -->
-                                                </ul>
-                                        </li>
-
-
-                                        <li>
-                                                <a href="<?php echo $CLIENT_ROOT; ?>/misc/acknowledgements.php" >Acknowledgements</a>
-                                        </li>
-
+					<li>
+						<a href="<?php echo $CLIENT_ROOT; ?>/collections/specprocessor/crowdsource/index.php" >Crowdsource</a>
+					</li>
+					<li>
+						<a href="#" ><?php echo (isset($LANG['H_CONTACTS'])?$LANG['H_CONTACTS']:'Contacts'); ?></a>
+						<ul>
+							<li>
+								<a href="<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php" ><?php echo (isset($LANG['H_PARTNERS'])?$LANG['H_PARTNERS']:'Partners'); ?></a>
+							</li>
+							<!--
+							<li>
+								<a href="<?php echo $CLIENT_ROOT; ?>/misc/contacts.php" ><?php echo (isset($LANG['H_CONTACTS'])?$LANG['H_CONTACTS']:'Contacts'); ?></a>
+							</li>
+							-->
+						</ul>
+					</li>
+					<li>
+						<a href="<?php echo $CLIENT_ROOT; ?>/misc/acknowledgements.php" >Acknowledgements</a>
+					</li>
 				</ul>
 			</div>
 		</td>

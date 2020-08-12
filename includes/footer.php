@@ -20,11 +20,9 @@
                                         <a href="http://www.nsf.gov/awardsearch/showAward?AWD_ID=1802446&HistoricalAwards=false" target="_blank">1802446</a>,
                                         <a href="http://www.nsf.gov/awardsearch/showAward?AWD_ID=1802305&HistoricalAwards=false" target="_blank">1802305</a>.
                           </div>
-
                           <div style="width:650px;height:50px;margin-left:auto;margin-right:auto;margin-bottom:15px;display:table;" >
                                   The pteridoportal taxonomic thesaurus is based on the <a href=https://worldplants.webarchiv.kit.edu/ferns/>Checklist of Ferns and Lycophytes of the World</a>, generously provided by Michael Hassler.
                           </div>
-
 		</td>
 	</tr>
 </table>

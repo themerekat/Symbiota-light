@@ -4,6 +4,7 @@
 body{
 	width: 80%;
 	min-width:950px;
+	max-width:1100px;
 	margin-top:0px;
 }
 
@@ -52,26 +53,9 @@ body{
 
 /*Left menu components*/
 div.menu {
-	background-color:   white;
-	margin:				15px;
-	border:   			1px solid #CCCCFF;
-	padding-bottom:   	25px;
-	overflow:   		hidden;
-	width:   			150px;
-	border-radius:		0.5em 0.5em 1.5em 0.5em;
-	-moz-border-radius:	0.5em 0.5em 1.5em 0.5em;
-	-khtml-border-radius: 0.5em 0.5em 1.5em 0.5em;
 }
 
 div.menuheader{
-	background-color:   #C0C0C0;
-	font-family:   		Verdana, Geneva, Arial, Helvetica, sans-serif;
-	font-size:   		13px;
-	color:   			white;
-	overflow:   		hidden;
-	text-align:   		center;
-	padding:   			3px;
-	margin:			   	0px; 
 }
 
 div.menuheader a{
@@ -169,7 +153,7 @@ h3{
 
 #top_navbar{
 	clear:both;
-	height:33px;
+	height:32px;
 	background-image:url(images/menu_pri_background.jpg);
 	background-repeat:repeat-x;
 	background-position:top;
@@ -241,7 +225,7 @@ h3{
 }
 #hor_dropdown li:hover ul {
 	left:0;
-	top:33px;
+	top:32px;
 	padding:0px;
 	z-index:1000;
 }

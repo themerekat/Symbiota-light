@@ -83,7 +83,7 @@ if (top.frames.length!=0)
 						</ul>
 					</li>
 					<li>
-						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php" ><?php echo (isset($LANG['H_INVENTORIES'])?$LANG['H_INVENTORIES']:'Species Checklists'); ?></a>
+						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=1" ><?php echo (isset($LANG['H_INVENTORIES'])?$LANG['H_INVENTORIES']:'Species Checklists'); ?></a>
 						<ul>
 							<li>
 								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=1"><?php echo (isset($LANG['H_NORTH_AMER'])?$LANG['H_NORTH_AMER']:'North America'); ?></a>

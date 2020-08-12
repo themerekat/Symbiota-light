@@ -10,7 +10,6 @@ header("Content-Type: text/html; charset=".$CHARSET);
 	$activateJQuery = true;
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<link href="css/quicksearch.css" type="text/css" rel="Stylesheet" />
     <script src="js/jquery-3.2.1.min.js" type="text/javascript"></script>
 	<script src="js/jquery-ui-1.12.1/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="js/symb/api.taxonomy.taxasuggest.js" type="text/javascript"></script>
@@ -19,6 +18,33 @@ header("Content-Type: text/html; charset=".$CHARSET);
 		<?php include_once($SERVER_ROOT.'/includes/googleanalytics.php'); ?>
 	</script>
 	<style>
+		#quicksearchdiv{
+			width: 300px;
+			height: 90px;
+			margin: 8px auto;
+			padding: 5px 5px 0px 5px;
+			-moz-border-radius: 5px;
+			-webkit-border-radius: 5px;
+			border: 1px solid black;
+		}
+
+		#quicksearchtext{
+		}
+
+		#quicksearch input{
+			width: 250px;
+			float: left;
+			margin-bottom:0px;
+			padding-bottom:0px;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		#quicksearchbutton{
+			margin-left:10px;
+			margin-top:5px;
+			margin-bottom:0px;
+			padding-bottom:0px;
+		}
 		#slideshowcontainer{
 			border: 2px solid black;
 			border-radius:10px;
@@ -40,7 +66,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 				<div id="quicksearchdiv">
 					<!-- -------------------------QUICK SEARCH SETTINGS--------------------------------------- -->
 					<form name="quicksearch" id="quicksearch" action="<?php echo $CLIENT_ROOT; ?>/taxa/index.php" method="get" onsubmit="return verifyQuickSearch(this);">
-						<div id="quicksearchtext" ><?php echo (isset($LANG['QSEARCH_SEARCH'])?$LANG['QSEARCH_SEARCH']:'Search Taxon'); ?></div>
+						<div id="quicksearchtext" ><?php echo (isset($LANG['QSEARCH_SEARCH'])?$LANG['QSEARCH_SEARCH']:'Taxon Search'); ?></div>
 						<input id="taxa" type="text" name="taxon" />
 						<button name="formsubmit"  id="quicksearchbutton" type="submit" value="Search Terms"><?php echo (isset($LANG['QSEARCH_SEARCH_BUTTON'])?$LANG['QSEARCH_SEARCH_BUTTON']:'Search'); ?></button>
 					</form>

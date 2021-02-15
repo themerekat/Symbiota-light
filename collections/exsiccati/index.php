@@ -13,6 +13,16 @@ $imagesOnly = array_key_exists('imagesonly',$_REQUEST)?$_REQUEST['imagesonly']:0
 $sortBy = array_key_exists('sortby',$_REQUEST)?$_REQUEST['sortby']:0;
 $formSubmit = array_key_exists('formsubmit',$_REQUEST)?$_REQUEST['formsubmit']:'';
 
+//Sanitation
+if(!is_numeric($ometId)) $ometId = 0;
+if(!is_numeric($omenId)) $omenId = 0;
+if(!is_numeric($occidToAdd)) $occidToAdd = 0;
+$searchTerm = filter_var($searchTerm,FILTER_SANITIZE_STRING);
+if(!is_numeric($specimenOnly)) $specimenOnly = 0;
+if(!is_numeric($collId)) $collId = 0;
+if(!is_numeric($imagesOnly)) $imagesOnly = 0;
+if(!is_numeric($sortBy)) $sortBy = 0;
+
 if(!$specimenOnly && !array_key_exists('searchterm', $_POST)){
 	//Make specimen only the default action
 	$specimenOnly = 1;
@@ -66,25 +76,27 @@ if($isEditor && $formSubmit){
 		$statusStr = $exsManager->transferOccurrence($omenId,$_POST['occid'],trim($_POST['targetometid'],'k'),$_POST['targetexsnumber']);
 	}
 }
-if($formSubmit == 'dlexsiccati'){
-	$exsManager->exportExsiccatiAsCsv($searchTerm, $specimenOnly, $imagesOnly, $collId);
+if($formSubmit == 'dlexs' || $formSubmit == 'dlexs_titleOnly'){
+	$titleOnly = false;
+	if($formSubmit == 'dlexs_titleOnly') $titleOnly = true;
+	$exsManager->exportExsiccatiAsCsv($searchTerm, $specimenOnly, $imagesOnly, $collId, $titleOnly);
 	exit;
 }
 ?>
 <html>
 <head>
 	<title><?php echo $DEFAULT_TITLE; ?> Exsiccati</title>
-  <?php
-    $activateJQuery = false;
-    if(file_exists($SERVER_ROOT.'/includes/head.php')){
-      include_once($SERVER_ROOT.'/includes/head.php');
-    }
-    else{
-      echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-      echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-      echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-    }
-  ?>
+	<?php
+	$activateJQuery = false;
+	if(file_exists($SERVER_ROOT.'/includes/head.php')){
+		include_once($SERVER_ROOT.'/includes/head.php');
+	}
+	else{
+		echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
+		echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
+		echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
+	}
+	?>
 	<script type="text/javascript">
 		<?php include_once($SERVER_ROOT.'/includes/googleanalytics.php'); ?>
 	</script>
@@ -231,8 +243,8 @@ if($formSubmit == 'dlexsiccati'){
 			$titleArr = $exsManager->getTitleArr();
 			$selectValues = '';
 			//Added "k" prefix to key so that Chrom would maintain the correct sort order
-			foreach($titleArr as $k => $v){
-				$selectValues .= ',k'.$k.': "'.$v.'"';
+			foreach($titleArr as $k => $vArr){
+				$selectValues .= ',k'.$k.': "'.$vArr['title'].'"';
 			}
 			?>
 			function buildExsSelect(selectObj){
@@ -251,6 +263,10 @@ if($formSubmit == 'dlexsiccati'){
 		}
 		?>
 	</script>
+	<style type="text/css">
+		#option-div { margin: 5px; width: 300px; text-align: left; float: right; min-height: 325px; }
+		#option-div fieldset { background-color:#f2f2f2; }
+	</style>
 </head>
 <body>
 	<?php
@@ -278,9 +294,9 @@ if($formSubmit == 'dlexsiccati'){
 		}
 		if(!$ometId && !$omenId){
 			?>
-			<div id="cloptiondiv" style="width:249px;float:right;">
+			<div id="option-div">
 				<form name="optionform" action="index.php" method="post">
-					<fieldset style="background-color:#FFD700;">
+					<fieldset>
 					    <legend><b>Options</b></legend>
 				    	<div>
 				    		<b>Search:</b>
@@ -314,19 +330,19 @@ if($formSubmit == 'dlexsiccati'){
 							<input type="radio" name="sortby" value="0" <?php echo ($sortBy == 0?"CHECKED":""); ?> onchange="this.form.submit()">Title
 							<input type="radio" name="sortby" value="1" <?php echo ($sortBy == 1?"CHECKED":""); ?> onchange="this.form.submit()">Abbreviation
 						</div>
-						<div style="float:right;" title="Download Exsiccati Records">
-							<?php
-							$dlUrl = 'index.php?formsubmit=dlexsiccati&searchterm='.$searchTerm.'&specimenonly='.$specimenOnly.'&imagesonly='.$imagesOnly.'&collid='.$collId;
-							?>
-							<a href="<?php echo $dlUrl; ?>" target="_blank"><img src="../../images/dl.png" style="width:15px" /></a>
-						</div>
-						<div style="margin:5px 0px 0px 5px;">
-							<input name="formsubmit" type="submit" value="Rebuild List" />
+						<div style="margin-top:5px">
+							<div style="float:right;">
+								<span title="Exsiccati download: titles only"><button name="formsubmit" type="submit" value="dlexs_titleOnly"><img src="../../images/dl.png" style="width:15px" /></button></span>
+								<span title="Exsiccati download: with numbers and occurrences"><button name="formsubmit" type="submit" value="dlexs"><img src="../../images/dl.png" style="width:15px" /></button></span>
+							</div>
+							<div>
+								<button name="formsubmit" type="submit" value="rebuildList">Rebuild List</button>
+							</div>
 						</div>
 					</fieldset>
 				</form>
 			</div>
-			<div style="font-weight:bold;font-size:120%;">Exsiccati</div>
+			<div style="font-weight:bold;font-size:120%;">Exsiccati Titles</div>
 			<?php
 			if($isEditor){
 				?>
@@ -338,7 +354,7 @@ if($formSubmit == 'dlexsiccati'){
 						<fieldset style="margin:10px;padding:15px;background-color:#B0C4DE;">
 							<legend><b>Add New Exsiccati</b></legend>
 							<div style="margin:2px;">
-								Title:<br/><input name="title" type="text" value="" style="width:480px;" />
+								Title:<br/><input name="title" type="text" value="" style="width:90%;" />
 							</div>
 							<div style="margin:2px;">
 								Abbr:<br/><input name="abbreviation" type="text" value="" style="width:480px;" />
@@ -373,12 +389,15 @@ if($formSubmit == 'dlexsiccati'){
 				<?php
 				$titleArr = $exsManager->getTitleArr($searchTerm, $specimenOnly, $imagesOnly, $collId, $sortBy);
 				if($titleArr){
-					foreach($titleArr as $k => $titleStr){
+					foreach($titleArr as $k => $tArr){
 						?>
 						<li>
-							<a href="index.php?ometid=<?php echo $k.'&specimenonly='.$specimenOnly.'&imagesonly='.$imagesOnly.'&collid='.$collId.'&sortBy='.$sortBy; ?>">
-								<?php echo $titleStr; ?>
-							</a>
+							<?php
+							echo '<a href="index.php?ometid='.$k.'&specimenonly='.$specimenOnly.'&imagesonly='.$imagesOnly.'&collid='.$collId.'&sortBy='.$sortBy.'">';
+							echo $tArr['title'];
+							echo '</a>';
+							if(isset($tArr['exsrange'])) echo ' ['.$tArr['exsrange'].']';
+							?>
 						</li>
 						<?php
 					}
@@ -408,6 +427,9 @@ if($formSubmit == 'dlexsiccati'){
 					<?php
 				}
 				echo $exsArr['title'].', '.$exsArr['editor'].($exsArr['exsrange']?' ['.$exsArr['exsrange'].']':'');
+				if(isset($exsArr['sourceIdentifier'])){
+					if(preg_match('/^http.+IndExs.+={1}(\d+)$/', $exsArr['sourceIdentifier'], $m)) echo ' (<a href="'.$exsArr['sourceIdentifier'].'" target="_blank">IndExs #'.$m[1].'</a>)';
+				}
 				if($exsArr['notes']) echo '<div>'.$exsArr['notes'].'</div>';
 				?>
 			</div>
@@ -416,7 +438,7 @@ if($formSubmit == 'dlexsiccati'){
 					<fieldset style="margin:10px;padding:15px;background-color:#B0C4DE;">
 						<legend><b>Edit Title</b></legend>
 						<div style="margin:2px;">
-							Title:<br/><input name="title" type="text" value="<?php echo $exsArr['title']; ?>" style="width:500px;" />
+							Title:<br/><input name="title" type="text" value="<?php echo $exsArr['title']; ?>" style="width:90%;" />
 						</div>
 						<div style="margin:2px;">
 							Abbr:<br/><input name="abbreviation" type="text" value="<?php echo $exsArr['abbreviation']; ?>" style="width:500px;" />
@@ -464,8 +486,8 @@ if($formSubmit == 'dlexsiccati'){
 								<?php
 								$titleArr = $exsManager->getTitleArr();
 								unset($titleArr[$ometId]);
-								foreach($titleArr as $titleId => $titleStr){
-									echo '<option value="'.$titleId.'">'.$titleStr.'</option>';
+								foreach($titleArr as $titleId => $tArr){
+									echo '<option value="'.$titleId.'">'.$tArr['title'].'</option>';
 								}
 								?>
 							</select>
@@ -550,6 +572,9 @@ if($formSubmit == 'dlexsiccati'){
 				echo $mdArr['editor'];
 				if($mdArr['exsrange']) echo ' ['.$mdArr['exsrange'].']';
 				if($mdArr['notes']) echo '</br>'.$mdArr['notes'];
+				if(isset($mdArr['sourceIdentifier'])){
+					if(preg_match('/^http.+IndExs.+={1}(\d+)$/', $mdArr['sourceIdentifier'], $m)) echo '<br/><a href="'.$mdArr['sourceIdentifier'].'" target="_blank">IndExs #'.$m[1].'</a>';
+				}
 				?>
 			</div>
 			<div id="numeditdiv" style="display:none;">

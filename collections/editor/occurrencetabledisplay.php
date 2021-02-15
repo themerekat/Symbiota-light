@@ -7,8 +7,14 @@ $collId = array_key_exists('collid',$_REQUEST)?$_REQUEST['collid']:0;
 $recLimit = array_key_exists('reclimit',$_REQUEST)?$_REQUEST['reclimit']:1000;
 $occIndex = array_key_exists('occindex',$_REQUEST)?$_REQUEST['occindex']:0;
 $crowdSourceMode = array_key_exists('csmode',$_REQUEST)?$_REQUEST['csmode']:0;
-$reset = array_key_exists('reset',$_REQUEST)?$_REQUEST['reset']:false;
 $action = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
+
+//Sanitation
+if(!is_numeric($collId)) $collId = 0;
+if(!is_numeric($recLimit)) $recLimit = 1000;
+if(!is_numeric($occIndex)) $occIndex = false;
+if(!is_numeric($crowdSourceMode)) $crowdSourceMode = 0;
+$action = filter_var($action,FILTER_SANITIZE_STRING);
 
 $occManager = new OccurrenceEditorManager();
 
@@ -38,15 +44,13 @@ $headerMapBase = array('institutioncode'=>'Institution Code (override)','collect
 	'samplingprotocol' => 'Sampling Protocol', 'preparations' => 'Preparations', 'reproductivecondition' => 'Reproductive Condition',
 	'typestatus' => 'Type Status','cultivationstatus' => 'Cultivation Status','establishmentmeans' => 'Establishment Means',
 	'disposition' => 'Disposition','duplicatequantity' => 'Duplicate Qty','datelastmodified' => 'Date Last Modified',
-	'processingstatus' => 'Processing Status','recordenteredby' => 'Entered By','dbpk' => 'dbpk','basisofrecord' => 'Basis Of Record');
+	'processingstatus' => 'Processing Status','recordenteredby' => 'Entered By','dbpk' => 'dbpk','basisofrecord' => 'Basis Of Record','language' => 'Language');
 $headMap = array();
 
 $qryCnt = 0;
 $statusStr = '';
 
 if($SYMB_UID){
-	//Set variables
-	$occManager->setSymbUid($SYMB_UID);
 	$occManager->setCollId($collId);
 	$collMap = $occManager->getCollMap();
 	if($IS_ADMIN || (array_key_exists("CollAdmin",$USER_RIGHTS) && in_array($collId,$USER_RIGHTS["CollAdmin"]))){
@@ -193,6 +197,7 @@ else{
 										<option value="">Select Field Name</option>
 										<option value="">----------------------</option>
 										<?php
+										asort($headerMapBase);
 										foreach($headerMapBase as $k => $v){
 											//Scientific name fields are excluded because batch updates will not update tidinterpreted index and authors
 											//Scientific name updates should happen within
@@ -304,8 +309,9 @@ else{
 						}
 						echo "<tr ".($recCnt%2?'class="alt"':'').">\n";
 						echo '<td>';
-						echo '<a href="occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$recStart).'&occid='.$id.'&collid='.$collId.'" title="open in same window">'.$id.'</a> ';
-						echo '<a href="occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$recStart).'&occid='.$id.'&collid='.$collId.'" target="_blank" title="open in new window">';
+						$url = 'occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$recStart).'&occid='.$id.'&collid='.$collId;
+						echo '<a href="'.$url.'" title="open in same window">'.$id.'</a> ';
+						echo '<a href="'.$url.'" target="_blank" title="open in new window">';
 						echo '<img src="../../images/newwin.png" style="width:10px;" />';
 						echo '</a>';
 						echo '</td>'."\n";

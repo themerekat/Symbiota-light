@@ -98,17 +98,20 @@ $smManager = new SiteMapManager();
 			if($clList && isset($USER_RIGHTS['ClAdmin'])){
 				$clAdmin = array_intersect_key($clList,array_flip($USER_RIGHTS['ClAdmin']));
 			}
-			$projList = $smManager->getProjectList();
-			if($projList){
-				echo '<div style="margin-top:10px;"><h2>'.$LANG['BIOINV'].'</h2></div><ul>';
-				foreach($projList as $pid => $pArr){
-					echo "<li><a href='projects/index.php?pid=".$pid."'>".$pArr["name"]."</a></li>\n";
-					echo "<ul><li>Manager: ".$pArr["managers"]."</li></ul>\n";
-				}
-				echo '</ul>';
-			}
 			?>
-
+			<div style="margin-top:10px;"><h2><?php echo (isset($LANG['BIOTIC_INVENTORIES'])?$LANG['BIOTIC_INVENTORIES']:'Biotic Inventory Projects'); ?></h2></div>
+			<ul>
+				<?php
+				$projList = $smManager->getProjectList();
+				if($projList){
+					foreach($projList as $pid => $pArr){
+						echo "<li><a href='projects/index.php?pid=".$pid."'>".$pArr["name"]."</a></li>\n";
+						echo "<ul><li>Manager: ".$pArr["managers"]."</li></ul>\n";
+					}
+				}
+				?>
+				<li><a href="checklists/index.php"><?php echo (isset($LANG['ALL_CHECKLISTS'])?$LANG['ALL_CHECKLISTS']:'All Public Checklists'); ?></a></li>
+			</ul>
 			<div style="margin-top:10px;"><h2><?php echo $LANG['DYNAMIC'];?></h2></div>
 			<ul>
 				<li>
@@ -170,11 +173,8 @@ $smManager = new SiteMapManager();
 						</ul>
 						<?php
 					}
-
 					if($KEY_MOD_IS_ACTIVE || array_key_exists("KeyAdmin",$USER_RIGHTS)){
-						?>
-						<h3><?php echo $LANG['IDKEYS'];?></h3>
-						<?php
+						echo '<h3>'.$LANG['IDKEYS'].'</h3>';
 						if(!$KEY_MOD_IS_ACTIVE && array_key_exists("KeyAdmin",$USER_RIGHTS)){
 							?>
 							<div style="color:red;margin-left:10px;">
@@ -221,7 +221,7 @@ $smManager = new SiteMapManager();
 					<h3><?php echo $LANG['IMAGES'];?></h3>
 					<div style="margin:10px;">
 						<?php echo $LANG['SEESYMBDOC'];?>
-						<a href="http://symbiota.org/docs/image-submission-2/"><?php echo $LANG['IMGSUB'];?></a>
+						<a href="https://symbiota.org/docs/image-submission-2/"><?php echo $LANG['IMGSUB'];?></a>
 						<?php echo $LANG['FORANOVERVIEW'];?>
 					</div>
 					<ul>
@@ -247,7 +247,7 @@ $smManager = new SiteMapManager();
 						?>
 					</ul>
 
-					<h3><?php echo $LANG['BIOINV'];?></h3>
+					<h3><?php echo $LANG['BIOTIC_INVENTORIES'];?></h3>
 					<ul>
 						<?php
 						if($IS_ADMIN){
@@ -376,7 +376,7 @@ $smManager = new SiteMapManager();
 					<h3><?php echo $LANG['OBSERV'];?></h3>
 					<div style="margin:10px;">
 						<?php echo $LANG['PARA2'];?>
-						<a href="http://symbiota.org/docs/specimen-data-management/" target="_blank"><?php echo $LANG['SYMBDOCU'];?></a> <?php echo $LANG['FORMOREINFO'];?>.
+						<a href="https://symbiota.org/docs/specimen-data-management/" target="_blank"><?php echo $LANG['SYMBDOCU'];?></a> <?php echo $LANG['FORMOREINFO'];?>.
 					</div>
 					<div style="margin:10px;">
 						<?php

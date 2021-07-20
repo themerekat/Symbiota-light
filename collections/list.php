@@ -18,6 +18,7 @@ if(!is_numeric($pageNumber)) $pageNumber = 1;
 
 $collManager = new OccurrenceListManager();
 $searchVar = $collManager->getQueryTermStr();
+if($targetTid && array_key_exists('mode', $_REQUEST)) $searchVar .= '&mode=voucher&targettid='.$targetTid;
 $occurArr = $collManager->getSpecimenMap($pageNumber,$cntPerPage);
 ?>
 <html>
@@ -25,17 +26,10 @@ $occurArr = $collManager->getSpecimenMap($pageNumber,$cntPerPage);
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
 	<title><?php echo $DEFAULT_TITLE.' '.$LANG['PAGE_TITLE']; ?></title>
 	<?php
-	$activateJQuery = true;
-	if(file_exists($SERVER_ROOT.'/includes/head.php')){
-		include_once($SERVER_ROOT.'/includes/head.php');
-	}
-	else{
-		echo '<link href="'.$CLIENT_ROOT.'/css/jquery-ui.css" type="text/css" rel="stylesheet" />';
-		echo '<link href="'.$CLIENT_ROOT.'/css/base.css?ver=1" type="text/css" rel="stylesheet" />';
-		echo '<link href="'.$CLIENT_ROOT.'/css/main.css?ver=1" type="text/css" rel="stylesheet" />';
-	}
+	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
+	<link href="<?php echo $CSS_BASE_PATH; ?>/collection.css" type="text/css" rel="stylesheet" />
 	<script src="../js/jquery-3.2.1.min.js" type="text/javascript"></script>
 	<script src="../js/jquery-ui-1.12.1/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
@@ -109,8 +103,9 @@ $occurArr = $collManager->getSpecimenMap($pageNumber,$cntPerPage);
 	if(isset($collections_listCrumbs)){
 		if($collections_listCrumbs){
 			echo '<div class="navpath">';
+			echo '<a href="../index.php">'.$LANG['NAV_HOME'].'</a> &gt;&gt; ';
 			echo $collections_listCrumbs.' &gt;&gt; ';
-			echo ' <b>'.$LANG['NAV_SPECIMEN_LIST'].'</b>';
+			echo '<b>'.$LANG['NAV_SPECIMEN_LIST'].'</b>';
 			echo '</div>';
 		}
 	}
@@ -171,7 +166,7 @@ $occurArr = $collManager->getSpecimenMap($pageNumber,$cntPerPage);
 						<input name="dltype" type="hidden" value="specimen" />
 					</form>
 					<div style="float:left">
-						<button class="icon-button" onclick="copyUrl()" title="Copy URL to Clipboard">
+						<button class="icon-button" onclick="copyUrl()" title="<?php echo (isset($LANG['COPY_TO_CLIPBOARD'])?$LANG['COPY_TO_CLIPBOARD']:'Copy URL to Clipboard'); ?>">
 							<img src="../images/dl2.png" srcset="../images/link.svg" class="svg-icon" style="width:15px; height:15px" />
 						</button>
 					</div>

@@ -15,6 +15,10 @@ $SERVER_ROOT = '';				//Full path to Symbiota project root folder
 $TEMP_DIR_ROOT = $SERVER_ROOT.'/temp';				//Must be writable by Apache; will use system default if not specified
 $LOG_PATH = $SERVER_ROOT.'/content/logs';					//Must be writable by Apache; will use <SYMBIOTA_ROOT>/temp/logs if not specified
 
+//Path to CSS files
+$CSS_BASE_PATH = $CLIENT_ROOT.'/css/symb';
+$CSS_VERSION_LOCAL = '1';		//Changing this variable will force a refresh of main.css styles within users browser cache for all pages
+
 //the root for the image directory
 $IMAGE_DOMAIN = '';				//Domain path to images, if different from portal
 $IMAGE_ROOT_URL = '';				//URL path to images
@@ -60,9 +64,11 @@ $QUICK_HOST_ENTRY_IS_ACTIVE = 0;   	//Allows quick entry for host taxa in occurr
 $GLOSSARY_EXPORT_BANNER = '';		//Banner image for glossary exports. Place in images/layout folder.
 $DYN_CHECKLIST_RADIUS = 10;			//Controls size of concentric rings that are sampled when building Dynamic Checklist
 $DISPLAY_COMMON_NAMES = 1;			//Display common names in species profile page and checklists displays
+$ACTIVATE_DUPLICATES = 1;			//Activates Specimen Duplicate listings and support features. Mainly relavent for herabrium collections
 $ACTIVATE_EXSICCATI = 0;			//Activates exsiccati fields within data entry pages; adding link to exsiccati search tools to portal menu is recommended
 $ACTIVATE_GEOLOCATE_TOOLKIT = 0;	//Activates GeoLocate Toolkit located within the Processing Toolkit menu items
 $OCCUR_SECURITY_OPTION = 1;			//Occurrence security options supported: value 1-7; 1 = Locality security, 2 = Taxon security, 4 = Full security, 3 = L & T, 5 = L & F, 6 = T & F, 7 = all
+$SEARCH_BY_TRAITS = '0';			//Activates search fields for searching by traits (if trait data have been encoded): 0 = trait search off; any number of non-zeros separated by commas (e.g., '1,6') = trait search on for the traits with these id numbers in table tmtraits.
 
 $IGSN_ACTIVATION = 0;
 
@@ -73,8 +79,6 @@ $RIGHTS_TERMS = array(
 	'CC BY (Attribution)' => 'http://creativecommons.org/licenses/by/4.0/',
 	'CC BY-NC (Attribution-Non-Commercial)' => 'http://creativecommons.org/licenses/by-nc/4.0/'
 );
-//$CSS_BASE_PATH = '/css/custom';	//To create a custom styling, uncomment, move all css files from /css/symb to new CSS Base Path, and modify as needed
-$CSS_VERSION_LOCAL = '20170414';		//Changing this variable will force a refresh of main.css styles within users browser cache for all pages
 
 /*
 //Default editor properties; properties defined in collection will override these values

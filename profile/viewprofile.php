@@ -63,10 +63,7 @@ if($isEditor){
 		$newPerson->setZip($zip);
 		$newPerson->setCountry($country);
 		$newPerson->setEmail($email);
-		$newPerson->setUrl($url);
 		$newPerson->setGUID($guid);
-		$newPerson->setBiography($biography);
-		$newPerson->setIsPublic($isPublic);
 
 		if(!$pHandler->updateProfile($newPerson)){
 			$statusStr = (isset($LANG['FAILED'])?$LANG['FAILED']:'Profile update failed!');
@@ -93,7 +90,7 @@ if($isEditor){
 		$person = $pHandler->getPerson();
 		$tabIndex = 2;
 	}
-	elseif($action == "Change Login"){
+	elseif($action == 'changeLogin'){
 		$pwd = '';
 		if($isSelf && isset($_POST["newloginpwd"])) $pwd = $_POST["newloginpwd"];
 		if(!$pHandler->changeLogin($_POST["newlogin"], $pwd)){

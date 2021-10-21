@@ -39,10 +39,7 @@ if($userId != $SYMB_UID) $isSelf = false;
 			$cityStateStr = trim($person->getCity().', '.$person->getState().' '.$person->getZip(),' ,');
 			if($cityStateStr) echo '<div>'.$cityStateStr.'</div>';
 			if($person->getCountry()) echo '<div>'.$person->getCountry().'</div>';
-			if($person->getUrl()) echo '<div><a href="'.$person->getUrl().'">'.$person->getUrl().'</a></div>';
-			if($person->getBiography()) echo '<div style="margin:10px;">'.$person->getBiography().'</div>';
 			echo '<div>Login name: '.($person->getUserName()?$person->getUserName():'not registered').'</div>';
-			echo '<div>User information: '.($person->getIsPublic()?'public':'private').'</div>';
 			?>
 			<div style="font-weight:bold;margin-top:10px;">
 				<div><a href="#" onclick="toggleEditingTools('profileeditdiv');return false;"><?php echo (isset($LANG['EDIT_PROFILE'])?$LANG['EDIT_PROFILE']:'Edit Profile'); ?></a></div>
@@ -138,31 +135,6 @@ if($userId != $SYMB_UID) $isSelf = false;
 						</td>
 					</tr>
 					<tr>
-						<td><b><?php echo (isset($LANG['URL'])?$LANG['URL']:'URL'); ?>:</b></td>
-						<td>
-							<div>
-								<input name="url"  size="40" value="<?php echo $person->getUrl();?>">
-							</div>
-
-						</td>
-					</tr>
-					<tr>
-						<td><b><?php echo (isset($LANG['BIOGRAPHY'])?$LANG['BIOGRAPHY']:'Biography'); ?>:</b></td>
-						<td>
-							<div>
-								<textarea name="biography" rows="4" cols="40"><?php echo $person->getBiography();?></textarea>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<div>
-								<input type="checkbox" name="ispublic" value="1" <?php if($person->getIsPublic()) echo "CHECKED"; ?> />
-								<?php echo (isset($LANG['MAKE_PUBLIC'])?$LANG['MAKE_PUBLIC']:'Make user information displayable to public'); ?>
-							</div>
-						</td>
-					</tr>
-					<tr>
 						<td colspan="2">
 							<div style="margin:10px;">
 								<input type="hidden" name="userid" value="<?php echo $userId;?>" />
@@ -240,7 +212,7 @@ if($userId != $SYMB_UID) $isSelf = false;
 				?>
 				<div style="margin:10px">
 					<input type="hidden" name="userid" value="<?php echo $userId;?>" />
-					<button type="submit" name="action" value="Change Username"><?php echo (isset($LANG['CHANGE_USERNAME'])?$LANG['CHANGE_USERNAME']:'Change Username'); ?></button>
+					<button type="submit" name="action" value="changeLogin"><?php echo (isset($LANG['CHANGE_USERNAME'])?$LANG['CHANGE_USERNAME']:'Change Username'); ?></button>
 				</div>
 			</form>
 		</fieldset>

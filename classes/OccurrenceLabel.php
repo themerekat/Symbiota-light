@@ -21,10 +21,10 @@ class OccurrenceLabel{
 	public function queryOccurrences($postArr){
 		global $USER_RIGHTS;
 		$canReadRareSpp = false;
-		if($GLOBALS['IS_ADMIN'] || array_key_exists("CollAdmin", $USER_RIGHTS) || array_key_exists("RareSppAdmin", $USER_RIGHTS) || array_key_exists("RareSppReadAll", $USER_RIGHTS)){
+		if($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin', $USER_RIGHTS) || array_key_exists('RareSppAdmin', $USER_RIGHTS) || array_key_exists('RareSppReadAll', $USER_RIGHTS)){
 			$canReadRareSpp = true;
 		}
-		elseif((array_key_exists("CollEditor", $USER_RIGHTS) && in_array($this->collid,$USER_RIGHTS["CollEditor"])) || (array_key_exists("RareSppReader", $USER_RIGHTS) && in_array($this->collid,$USER_RIGHTS["RareSppReader"]))){
+		elseif((array_key_exists('CollEditor', $USER_RIGHTS) && in_array($this->collid,$USER_RIGHTS['CollEditor'])) || (array_key_exists('RareSppReader', $USER_RIGHTS) && in_array($this->collid,$USER_RIGHTS['RareSppReader']))){
 			$canReadRareSpp = true;
 		}
 		$retArr = array();
@@ -103,27 +103,23 @@ class OccurrenceLabel{
 						$term1 = trim(substr($v,0,$p));
 						$term2 = trim(substr($v,$p+3));
 						if(is_numeric($term1) && is_numeric($term2)){
-							$iBetweenFrag[] = '(o.catalogNumber BETWEEN '.$term1.' AND '.$term2.')';
+							$iBetweenFrag[] = '((o.catalogNumber BETWEEN '.$term1.' AND '.$term2.') OR (o.otherCatalogNumbers BETWEEN '.$term1.' AND '.$term2.') OR (i.identifiervalue BETWEEN '.$term1.' AND '.$term2.'))';
 						}
 						else{
-							$catTerm = 'o.catalogNumber BETWEEN "'.$term1.'" AND "'.$term2.'"';
-							if(strlen($term1) == strlen($term2)) $catTerm .= ' AND length(o.catalogNumber) = '.strlen($term2);
+							$catTerm = '(o.catalogNumber BETWEEN "'.$term1.'" AND "'.$term2.'" OR o.othercatalogNumbers BETWEEN "'.$term1.'" AND "'.$term2.'" OR i.identifiervalue BETWEEN "'.$term1.'" AND "'.$term2.'")';
+							//if(strlen($term1) == strlen($term2)) $catTerm .= ' AND length(IFNULL(i.identifiervalue, o.catalogNumber)) = '.strlen($term2);
 							$iBetweenFrag[] = '('.$catTerm.')';
 						}
 					}
-					else{
-						$iInFrag[] = $v;
-					}
+					else $iInFrag[] = $v;
 				}
 				$iWhere = '';
-				if($iBetweenFrag){
-					$iWhere .= 'OR '.implode(' OR ',$iBetweenFrag);
-				}
+				if($iBetweenFrag) $iWhere .= 'OR '.implode(' OR ',$iBetweenFrag);
 				if($iInFrag){
-					$iWhere .= 'OR (o.catalogNumber IN("'.implode('","',$iInFrag).'")) ';
+					$iWhere .= 'OR (o.catalogNumber IN("'.implode('","',$iInFrag).'") OR o.otherCatalogNumbers IN("'.implode('","',$iInFrag).'") OR i.identifiervalue IN("'.implode('","',$iInFrag).'")) ';
 				}
 				$sqlWhere .= 'AND ('.substr($iWhere,3).') ';
-				$sqlOrderBy .= ',o.catalogNumber';
+				$sqlOrderBy .= ',i.identifiervalue,o.catalogNumber,o.otherCatalogNumbers';
 			}
 			if($this->collArr['colltype'] == 'General Observations'){
 				$sqlWhere .= 'AND (o.collid = '.$this->collid.') ';
@@ -132,9 +128,9 @@ class OccurrenceLabel{
 			elseif(!array_key_exists('extendedsearch', $postArr)){
 				$sqlWhere .= 'AND (o.collid = '.$this->collid.') ';
 			}
-			$sql = 'SELECT o.occid, o.collid, IFNULL(o.duplicatequantity,1) AS q, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS collector, o.observeruid, '.
+			$sql = 'SELECT DISTINCT o.occid, o.collid, IFNULL(o.duplicatequantity,1) AS q, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS collector, o.observeruid, '.
 				'o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county, o.locality) AS locality, IFNULL(o.localitySecurity,0) AS localitySecurity '.
-				'FROM omoccurrences o ';
+				'FROM omoccurrences o LEFT JOIN omoccuridentifiers i ON o.occid = i.occid ';
 			if(strpos($sqlWhere,'MATCH(f.recordedby)') || strpos($sqlWhere,'MATCH(f.locality)')){
 				$sql.= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
 			}
@@ -169,7 +165,6 @@ class OccurrenceLabel{
 			$occidStr = implode(',',$occidArr);
 			if(!preg_match('/^[,\d]+$/', $occidStr)) return null;
 			$sqlWhere = 'WHERE (o.occid IN('.$occidStr.')) ';
-			if($this->collArr['colltype'] == 'General Observations') $sqlWhere .= 'AND (o.observeruid = '.$GLOBALS['SYMB_UID'].') ';
 			//Get species authors for infraspecific taxa
 			$sql1 = 'SELECT o.occid, t2.author '.
 				'FROM taxa t INNER JOIN omoccurrences o ON t.tid = o.tidinterpreted '.
@@ -394,8 +389,8 @@ class OccurrenceLabel{
 
 	public function getLabelFormatArr($annotated = false){
 		$retArr = array();
-		//Add global portal defined label formats
-		if($GLOBALS['IS_ADMIN'] || $annotated){
+		if($GLOBALS['SYMB_UID']){
+			//Add global portal defined label formats
 			if(!file_exists($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php')){
 				@copy($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson_template.php',$GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php');
 			}
@@ -416,10 +411,9 @@ class OccurrenceLabel{
 				}
 			}
 			else $retArr['g'] = array('labelFormats'=>array());
-		}
-		//Add collection defined label formats
-		if($this->collid && $this->collArr['dynprops']){
-			if($collFormatArr = json_decode($this->collArr['dynprops'],true)){
+			//Add collection defined label formats
+			if($this->collid){
+				$collFormatArr = json_decode($this->collArr['dynprops'],true);
 				if($annotated){
 					if(isset($collFormatArr['labelFormats'])){
 						foreach($collFormatArr['labelFormats'] as $k => $labelObj){
@@ -428,11 +422,10 @@ class OccurrenceLabel{
 						}
 					}
 				}
-				else $retArr['c'] = $collFormatArr['labelFormats'];
+				elseif(isset($collFormatArr['labelFormats'])) $retArr['c'] = $collFormatArr['labelFormats'];
+				else $retArr['c'] = array();
 			}
-		}
-		//Add label formats associated with user profile
-		if($GLOBALS['SYMB_UID']){
+			//Add label formats associated with user profile
 			$sql = 'SELECT dynamicProperties FROM users WHERE uid = '.$GLOBALS['SYMB_UID'];
 			$rs = $this->conn->query($sql);
 			if($rs){
@@ -451,7 +444,8 @@ class OccurrenceLabel{
 
 					}
 				}
-				else $retArr['u'] = $dynPropArr['labelFormats'];
+				elseif(isset($dynPropArr['labelFormats'])) $retArr['u'] = $dynPropArr['labelFormats'];
+				else $retArr['u'] = array();
 			}
 		}
 		return $retArr;
@@ -526,6 +520,67 @@ class OccurrenceLabel{
 		$labelArr['labelBlocks'] = json_decode($postArr['json'],true);
 		if(is_numeric($labelIndex)) $labelFormatArr['labelFormats'][$labelIndex] = $labelArr;
 		else $labelFormatArr['labelFormats'][] = $labelArr;
+	}
+
+	public function cloneLabelJson($postArr){
+		$status = true;
+		$cloneTarget = $postArr['cloneTarget'];
+		$group = $postArr['group'];
+		$labelIndex = '';
+		if(isset($postArr['index'])) $labelIndex = $postArr['index'];
+		if(is_numeric($labelIndex) && $cloneTarget){
+			//Grab source
+			$globalFormatArr = array();
+			$collFormatArr = array();
+			$dynPropArr = array();
+			$sourceLabelArr = array();
+			if($group == 'g' || $cloneTarget == 'g'){
+				if(file_exists($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php')){
+					include($GLOBALS['SERVER_ROOT'].'/content/collections/reports/labeljson.php');
+					if(isset($LABEL_FORMAT_JSON)) $globalFormatArr = json_decode($LABEL_FORMAT_JSON,true);
+					if($group == 'g') $sourceLabelArr = $globalFormatArr['labelFormats'][$labelIndex];
+				}
+			}
+			if($group == 'c' || $cloneTarget == 'c'){
+				if($this->collid){
+					if($this->collArr['dynprops']) $collFormatArr = json_decode($this->collArr['dynprops'],true);
+					if($group == 'c') $sourceLabelArr = $collFormatArr['labelFormats'][$labelIndex];
+				}
+				else{
+					$this->errorArr[] = 'ERROR cloning label format to omcollections table: collid not set';
+					$status = false;
+				}
+			}
+			if($group == 'u' || $cloneTarget == 'u'){
+				$sql = 'SELECT dynamicProperties FROM users WHERE uid = '.$GLOBALS['SYMB_UID'];
+				$rs = $this->conn->query($sql);
+				if($rs){
+					if($r = $rs->fetch_object()){
+						if($r->dynamicProperties) $dynPropArr = json_decode($r->dynamicProperties,true);
+						if($group == 'u') $sourceLabelArr = $dynPropArr['labelFormats'][$labelIndex];
+					}
+					$rs->free();
+				}
+			}
+			$sourceLabelArr['title'] = $sourceLabelArr['title'].' - CLONE';
+			//Save to target group
+			if($cloneTarget == 'g'){
+				$globalFormatArr['labelFormats'][] = $sourceLabelArr;
+				$status = $this->saveGlobalJson($globalFormatArr);
+
+			}
+			elseif($cloneTarget == 'c'){
+				$collFormatArr['labelFormats'][] = $sourceLabelArr;
+				$status = $this->updateCollectionJson($collFormatArr);
+
+			}
+			elseif($cloneTarget == 'u'){
+				$dynPropArr['labelFormats'][] = $sourceLabelArr;
+				$status = $this->updateUserJson($dynPropArr);
+
+			}
+		}
+		return $status;
 	}
 
 	public function deleteLabelFormat($group, $labelIndex){
@@ -677,9 +732,7 @@ class OccurrenceLabel{
 				'CONCAT_WS(", ",d.identifiedBy,d.dateIdentified,d.identificationRemarks,d.identificationReferences) AS determination '.
 				'FROM omoccurrences o INNER JOIN omoccurdeterminations d ON o.occid = d.occid '.
 				'WHERE (o.collid = '.$this->collid.') AND (d.printqueue = 1) ';
-			if($this->collArr['colltype'] == 'General Observations'){
-				$sql .= ' AND (o.observeruid = '.$GLOBALS['SYMB_UID'].') ';
-			}
+			if($this->collArr['colltype'] == 'General Observations') $sql .= ' AND (o.observeruid = '.$GLOBALS['SYMB_UID'].') ';
 			$sql .= 'LIMIT 400 ';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
@@ -700,7 +753,7 @@ class OccurrenceLabel{
 		$retArr = array();
 		if($this->collid){
 			$sql = 'SELECT DISTINCT labelproject FROM omoccurrences WHERE labelproject IS NOT NULL AND collid = '.$this->collid.' ';
-			if($this->collArr['colltype'] == 'General Observations') $sql .= 'AND (observeruid = '.$GLOBALS['SYMB_UID'].') ';
+			if($this->collArr['colltype'] == 'General Observations' && !array_key_exists('extendedsearch', $GLOBALS['_POST'])) $sql .= 'AND (observeruid = '.$GLOBALS['SYMB_UID'].') ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr[] = $r->labelproject;
@@ -719,7 +772,7 @@ class OccurrenceLabel{
 				'INNER JOIN omoccurdatasetlink dl ON ds.datasetid = dl.datasetid '.
 				'INNER JOIN omoccurrences o ON dl.occid = o.occid '.
 				'WHERE (r.tablename = "omoccurdatasets") AND (o.collid = '.$this->collid.') ';
-			if($this->collArr['colltype'] == 'General Observations') $sql .= 'AND (o.observeruid = '.$GLOBALS['SYMB_UID'].') ';
+			if($this->collArr['colltype'] == 'General Observations' && !array_key_exists('extendedsearch', $GLOBALS['_POST'])) $sql .= 'AND (o.observeruid = '.$GLOBALS['SYMB_UID'].') ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				$retArr[$r->datasetid] = $r->name;

@@ -1,7 +1,7 @@
 <?php
 /*
 ------------------
-Language: Espa�ol (Spanish)
+Language: Español (Spanish)
 ------------------
 */
 
@@ -59,5 +59,5 @@ $LANG['HAS_GENETIC'] = 'Limitar a ejemplares con datos gen&eacute;ticos';
 $LANG['HAS_COORDS'] = 'Limitar a ejemplares con coordenadas geogr&aacute;ficas';
 $LANG['INCLUDE_CULTIVATED'] = 'Incluye ejemplares cultivadas/cautivas';
 $LANG['TRAIT_HEADER'] = 'Criterios de Rasgos';
-$LANG['TRAIT_DESCRIPTION'] = 'La selección de varios rasgos devolverá todos los registros con al menos uno de esos rasgos';
+$LANG['TRAIT_DESCRIPTION'] = 'La selección de varios rasgos devolverá todos los registros con <b>al menos uno</b> de esos rasgos';
 ?>

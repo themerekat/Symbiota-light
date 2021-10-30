@@ -9,7 +9,7 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 </script>
 <table id="maintable" cellspacing="0">
 	<tr>
-		<td id="header" colspan="3" style="color:#FFFFFF;background-color:#026B6E;">
+		<td id="header" colspan="3" style="color:#000000;background-color:#000000;">
 			<div style="clear:both; width:100%; height:170px; border-bottom:1px solid #000000;">
 				<div style="float:left">
 					<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/left_logo.png" style="margin:0px 30px;width:130px" />

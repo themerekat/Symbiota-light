@@ -2,3 +2,4 @@
 /config/symbini.php
 .project
 .settings/org.eclipse.core.resources.prefs
+*.DS_Store

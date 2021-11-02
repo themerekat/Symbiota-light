@@ -31,8 +31,9 @@ header("Content-Type: text/html; charset=".$CHARSET);
 	?>
 	<!-- This is inner text! -->
 	<div id="innertext">
-		<h1><center>Bee Library for Bee Specimens, Images and Traits</center></h1>
+		<h1>Extending Anthophila Research Through Image and Trait Digitization</h1>
 		<div id="quicksearchdiv">
+
 			<!-- -------------------------QUICK SEARCH SETTINGS--------------------------------------- -->
 			<form name="quicksearch" id="quicksearch" action="<?php echo $CLIENT_ROOT; ?>/taxa/index.php" method="get" onsubmit="return verifyQuickSearch(this);">
 				<div id="quicksearchtext" ><?php echo (isset($LANG['QSEARCH_SEARCH'])?$LANG['QSEARCH_SEARCH']:'Taxon Search'); ?></div>
@@ -40,9 +41,17 @@ header("Content-Type: text/html; charset=".$CHARSET);
 				<button name="formsubmit"  id="quicksearchbutton" type="submit" value="Search Terms"><?php echo (isset($LANG['QSEARCH_SEARCH_BUTTON'])?$LANG['QSEARCH_SEARCH_BUTTON']:'Search'); ?></button>
 			</form>
 	</div>
-		<div style="padding: 0px 10px;float:left;">
-			Bees are critical to sustaining a large proportion of global food production, as well as pollinating both wild and cultivated plants. They are decreasing in both numbers and diversity and our understanding of the factors driving these declines is limited, in part, because we lack sufficient data on the distribution of bee species to predict changes in their geographic range under climate change scenarios. Additionally lacking is adequate data on the behavioral and anatomical traits that may make bees either vulnerable or resilient to human-induced environmental changes. Fortunately, a wealth of associated attributes can be extracted from the specimens deposited in natural history collections. Extending Anthophila Research Through Image and Trait Digitization (Big-Bee) is a newly funded US National Science Foundation Advancing Digitization of Biodiversity Collections project. Big-Bee will advance research on bee ecology and taxonomy through the creation and standardization of open datasets for taxonomic and computational analysis. It will overcome challenges in bee identification and discovery by linking ecological and anatomical traits. The project will supply innovative methods for deep digitization of target taxa, including high-resolution imaging methods. These image data will enable the scoring of life-history traits and will facilitate identification from digitized specimens. Big-Bee will further revolutionize processes of insect specimen digitization by enabling global bee data to be integrated and linked. The project will produce important partnerships between researchers, industry, and government agencies.
-		</div>
+		<div style="float:left"><img src="images/layout/image-types_v3.png" style="width:350px;margin:0px 10px" /></div>
+	<p>
+ The Bee Library is an online repository of bee image, trait, and specimen data. The portal has a worldwide scope and may include other taxa that are not bees but interact with bees (i.e., bee parasites). The contributors to this resource are varied and include the many taxonomists, data managers, and bee ecologists whose work it is to determine bee specimens and help us understand bee evolution and ecology. The Bee Library recommends citing the repository for a bee specimen, the specimen catalog number, and who determined the specimen in any publication that references data from this portal. Images are free for reuse, but please cite the institution that provided the image.
+	</p>
+	<p>
+These data are currently growing due to the work of the <strong>Extending Anthophila Research Through Image and Trait Digitization</strong> National Science Foundation Project (<a href="http://big-bee.net">Big-Bee</a>). Big-Bee is a collaboration of 13 universities, research stations, natural history collections, and agencies who aim to share images, label, and functional trait (i.e., flight timing, host plant, body size) data for over 5000 bee species.
+	</p>
+	<p>
+	<p>
+<strong>Cite the Big-Bee projects: </strong>Seltmann KC, Allen J, Brown BV, Carper A, Engel MS, Franz N, Gilbert E, Grinter C, Gonzalez VH, Horsley P, Lee S, Maier C, Miko I, Morris P, Oboyski P, Pierce NE, Poelen J, Scott VL, Smith M, Talamas EJ, Tsutsui ND, Tucker E (2021) Announcing Big-Bee: An initiative to promote understanding of bees through image and trait digitization. Biodiversity Information Science and Standards 5: e74037. https://doi.org/10.3897/biss.5.74037
+	</p>
 	</div>
 	<?php
 	include($SERVER_ROOT.'/includes/footer.php');

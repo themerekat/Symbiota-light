@@ -9,17 +9,17 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 </script>
 <table id="maintable" cellspacing="0">
 	<tr>
-		<td id="header" colspan="3" style="color:#000000;background-color:#000000;">
-			<div style="clear:both; width:100%; height:170px; border-bottom:1px solid #000000;">
+		<td id="header" colspan="3" style="color:#FFFFFF;background-color:#000000;">
+			<div style="clear:both; width:100%; height:80px; border-bottom:1px solid #000000;">
 				<div style="float:left">
-					<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/left_logo.png" style="margin:0px 30px;width:130px" />
+					<img src="<?php echo $CLIENT_ROOT; ?>/images/layout/left_logo.png" style="margin:0px 30px;width:300px" />
 				</div>
-				<div style="margin-left: 40px; color: #fff; font-family: 'Mate', serif; letter-spacing: 1px; text-shadow: 0 0 7px rgba(0,0,0,0.5);">
-					<div style="margin-top:30px; font-size:60px; line-height:48px;">
+				<div style="margin-left: 40px; color: #D3D3D3; font-family: 'Mate', serif; letter-spacing: 1px; text-shadow: 0 0 7px rgba(0,0,0,0.5);">
+					<div style="margin-top:20px; font-size:60px; line-height:48px;">
 						Bee Library
 					</div>
-					<div style="margin-top:20px; font-size:35px; font-style: italic">
-						Extending Anthophila research through image and trait digitization 
+					<div style="margin-top:20px; font-size:20px; font-style: italic">
+						An online resource connecting images, specimen records, and natural history information about bees.
 					</div>
 				</div>
 			</div>
@@ -101,6 +101,13 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 							</li>
 						</ul>
 					</li>
+					<li>
+						<a href="https://www.globalbioticinteractions.org/bigbee" target="_blank">Global Biotic Interactions</a>
+					</li>
+					<li>
+						<a href="http://big-bee.net" target="_blank">Big-Bee News</a>
+					</li>
+
 
 <!--
  Commenting out these menu items - MAJ 29 oct 2021

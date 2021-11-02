@@ -5,7 +5,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 ?>
 <html>
 <head>
-	<title><?php echo $DEFAULT_TITLE; ?> Home</title>
+	<title><?php echo $DEFAULT_TITLE; ?>Big-Bee</title>
 	<?php
 	$activateJQuery = true;
 	include_once($SERVER_ROOT.'/includes/head.php');

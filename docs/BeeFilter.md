@@ -34,4 +34,11 @@ DELETE FROM uploadspectemp WHERE collid = collidInput AND genericcolumn1 IS NULL
 /*random plant example
 DELETE FROM uploadspectemp WHERE collid = collidInput AND family IN("Poaceae","Boraginaceae");
 */
+
+#Clean sciname to remove authorship from Arctos and other IPT DwC-A's - only matches " AuthorshipString"
+
+UPDATE uploadspectemp
+SET sciname = REPLACE(sciname, CONCAT(' ',scientificNameAuthorship),'')
+WHERE collid = collidInput;
+
 END

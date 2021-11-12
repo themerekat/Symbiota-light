@@ -41,7 +41,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 				<button name="formsubmit"  id="quicksearchbutton" type="submit" value="Search Terms"><?php echo (isset($LANG['QSEARCH_SEARCH_BUTTON'])?$LANG['QSEARCH_SEARCH_BUTTON']:'Search'); ?></button>
 			</form>
 	</div>
-		<div style="float:left"><img src="images/layout/image-types_v3.png" style="width:350px;margin:0px 10px" /></div>
+		<div style="float:left"><img src="images/layout/image-types_v3.jpg" style="width:350px;margin:0px 10px" /></div>
 	<p>
  The Bee Library is an online repository of bee image, trait, and specimen data. The portal has a worldwide scope and may include other taxa that are not bees but interact with bees (i.e., bee parasites). The contributors to this resource are varied and include the many taxonomists, data managers, and bee ecologists whose work it is to determine bee specimens and help us understand bee evolution and ecology. The Bee Library recommends citing the repository for a bee specimen, the specimen catalog number, and who determined the specimen in any publication that references data from this portal. Images are free for reuse, but please cite the institution that provided the image.
 	</p>

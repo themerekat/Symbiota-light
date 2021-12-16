@@ -50,12 +50,9 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 						<?php
 					}
 					?>
-
-                                        <span style="margin-left:5px;margin-right:5px;">
-            						<a href='<?php echo $CLIENT_ROOT; ?>/sitemap.php'><?php echo (isset($LANG['H_SITEMAP'])?$LANG['H_SITEMAP']:'Sitemap'); ?></a>
-
-                                        </span>
-
+					<span style="margin-left:5px;margin-right:5px;">
+						<a href='<?php echo $CLIENT_ROOT; ?>/sitemap.php'><?php echo (isset($LANG['H_SITEMAP'])?$LANG['H_SITEMAP']:'Sitemap'); ?></a>
+					</span>
 					<span style="margin-left:5px;margin-right:5px;">
 						<select onchange="setLanguage(this)">
 							<option value="en">English</option>
@@ -68,9 +65,6 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 						}
 						?>
 					</span>
-
-
-
 				</div>
 				<ul id="hor_dropdown">
 					<li>
@@ -86,7 +80,7 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 								<a href="<?php echo $CLIENT_ROOT; ?>/collections/map/index.php" target="_blank"><?php echo (isset($LANG['H_MAP'])?$LANG['H_MAP']:'Map'); ?></a>
 							</li>
 							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/taxa/taxonomy/taxonomydynamicdisplay.php" ><?php echo (isset($LANG['H_TAXONOMIC_EXPLORER'])?$LANG['H_TAXONOMIC_EXPLORER']:'Taxonomic Explorer'); ?></a>
+								<a href="<?php echo $CLIENT_ROOT; ?>/taxa/taxonomy/taxonomydynamicdisplay.php?target=Apoidea" ><?php echo (isset($LANG['H_TAXONOMIC_EXPLORER'])?$LANG['H_TAXONOMIC_EXPLORER']:'Taxonomic Explorer'); ?></a>
 							</li>
 						</ul>
 					</li>
@@ -107,100 +101,6 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 					<li>
 						<a href="http://big-bee.net" target="_blank">Big-Bee News</a>
 					</li>
-
-
-<!--
- Commenting out these menu items - MAJ 29 oct 2021
-
-
-					<li>
-						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php" ><?php echo (isset($LANG['H_INVENTORIES'])?$LANG['H_INVENTORIES']:'Species Checklists'); ?></a>
-						<ul>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=1"><?php echo (isset($LANG['H_PROJECT_1'])?$LANG['H_PROJECT_1']:'Project 1'); ?></a>
-								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=2"><?php echo (isset($LANG['H_PROJECT_2'])?$LANG['H_PROJECT_2']:'Project 2'); ?></a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<a href="#" ><?php echo (isset($LANG['H_DYN_LISTS'])?$LANG['H_DYN_LISTS']:'Dynamic Species List'); ?></a>
-						<ul>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&taxa=Amphibia" ><?php echo (isset($LANG['H_AMPHIBIA'])?$LANG['H_AMPHIBIA']:'Amphibians'); ?></a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&taxa=Arthropoda" ><?php echo (isset($LANG['H_ARTHROPODA'])?$LANG['H_ARTHROPODA']:'Arthropods'); ?></a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&taxa=Mammalia" ><?php echo (isset($LANG['H_MAMMALIA'])?$LANG['H_MAMMALIA']:'Mammals'); ?></a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&taxa=Aves" ><?php echo (isset($LANG['H_AVES'])?$LANG['H_AVES']:'Birds'); ?></a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&taxa=Plantae" ><?php echo (isset($LANG['H_PLANTA'])?$LANG['H_PLANTA']:'Plants'); ?></a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&taxa=Actinopterygii" ><?php echo (isset($LANG['H_FISH'])?$LANG['H_FISH']:'Fish'); ?></a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=checklist&taxa=Reptilia" ><?php echo (isset($LANG['H_REPTILIA'])?$LANG['H_REPTILIA']:'Reptiles'); ?></a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<a href="#" ><?php echo (isset($LANG['H_DYN_KEYS'])?$LANG['H_DYN_KEYS']:'Identification Keys'); ?></a>
-						<ul>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=key&taxa=Amphibia" ><?php echo (isset($LANG['H_AMPHIBIA'])?$LANG['H_AMPHIBIA']:'Amphibians'); ?></a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=key&taxa=Arthropoda" ><?php echo (isset($LANG['H_ARTHROPODA'])?$LANG['H_ARTHROPODA']:'Arthropods'); ?></a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=key&taxa=Mammalia" ><?php echo (isset($LANG['H_MAMMALIA'])?$LANG['H_MAMMALIA']:'Mammals'); ?></a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=key&taxa=Aves" ><?php echo (isset($LANG['H_AVES'])?$LANG['H_AVES']:'Birds'); ?></a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=key&taxa=Plantae" ><?php echo (isset($LANG['H_PLANTA'])?$LANG['H_PLANTA']:'Plants'); ?></a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=key&taxa=Actinopterygii" ><?php echo (isset($LANG['H_FISH'])?$LANG['H_FISH']:'Fish'); ?></a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/dynamicmap.php?interface=key&taxa=Reptilia" ><?php echo (isset($LANG['H_REPTILIA'])?$LANG['H_REPTILIA']:'Reptiles'); ?></a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<a href="#" ><?php echo (isset($LANG['H_MORE_INFO'])?$LANG['H_MORE_INFO']:'Additional Info'); ?></a>
-						<ul>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/misc/aboutproject.php" ><?php echo (isset($LANG['H_ABOUT_PROJECT'])?$LANG['H_ABOUT_PROJECT']:'About Project'); ?></a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php" ><?php echo (isset($LANG['H_PARTNERS'])?$LANG['H_PARTNERS']:'Partners'); ?></a>
-							</li>
-							<li>
-								<a href="<?php echo $CLIENT_ROOT; ?>/misc/contacts.php" ><?php echo (isset($LANG['H_CONTACTS'])?$LANG['H_CONTACTS']:'Contacts'); ?></a>
-							</li>
-							<li>
-								<a href="http://symbiota.org/docs/symbiota-introduction/symbiota-help-pages/" target="_blank" ><?php echo (isset($LANG['H_HELP'])?$LANG['H_HELP']:'Help'); ?></a>
-							</li>
-							<li>
-							</li>
-						</ul>
-
-
-
-
-
-					</li>
-
-end of commented out section --!>
-
 				</ul>
 			</div>
 		</td>

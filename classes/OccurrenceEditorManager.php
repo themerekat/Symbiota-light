@@ -2,6 +2,8 @@
 include_once($SERVER_ROOT.'/config/dbconnection.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceDuplicate.php');
 include_once($SERVER_ROOT.'/classes/UuidFactory.php');
+if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.'.$LANG_TAG.'.php')) include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.'.$LANG_TAG.'.php');
+else include_once($SERVER_ROOT.'/content/lang/collections/editor/occurrenceeditor.en.php');
 
 class OccurrenceEditorManager {
 
@@ -247,7 +249,7 @@ class OccurrenceEditorManager {
 		$this->otherCatNumIsNum = false;
 		if(array_key_exists('ocn',$this->qryArr)){
 			if(strtolower($this->qryArr['ocn']) == 'is null'){
-				$sqlWhere .= 'AND (o.othercatalognumbers IS NULL) ';
+				$sqlWhere .= 'AND (o.othercatalognumbers IS NULL) AND (id.occid IS NULL) ';
 			}
 			else{
 				$ocnArr = explode(',',$this->qryArr['ocn']);
@@ -260,18 +262,21 @@ class OccurrenceEditorManager {
 						$v = str_ireplace(array('>',' and ','<'),array('',' - ',''),$v);
 					}
 					if(strpos('%',$v) !== false){
-						$ocnBetweenFrag[] = '(o.othercatalognumbers LIKE "'.$v.'")';
+						$ocnBetweenFrag[] = '((o.othercatalognumbers LIKE "'.$v.'") OR (id.identifierValue LIKE "'.$v.'"))';
 					}
 					elseif($p = strpos($v,' - ')){
 						$term1 = trim(substr($v,0,$p));
 						$term2 = trim(substr($v,$p+3));
 						if(is_numeric($term1) && is_numeric($term2)){
 							$this->otherCatNumIsNum = true;
-							$ocnBetweenFrag[] = '(o.othercatalognumbers BETWEEN '.$term1.' AND '.$term2.')';
+							$ocnBetweenFrag[] = '((o.othercatalognumbers BETWEEN '.$term1.' AND '.$term2.') OR (id.identifierValue BETWEEN '.$term1.' AND '.$term2.'))';
 						}
 						else{
-							$ocnTerm = 'o.othercatalognumbers BETWEEN "'.$term1.'" AND "'.$term2.'"';
+							$ocnTerm = '(o.othercatalognumbers BETWEEN "'.$term1.'" AND "'.$term2.'"';
 							if(strlen($term1) == strlen($term2)) $ocnTerm .= ' AND length(o.othercatalognumbers) = '.strlen($term2);
+							$ocnTerm .= ') OR (id.identifierValue BETWEEN "'.$term1.'" AND "'.$term2.'"';
+							if(strlen($term1) == strlen($term2)) $ocnTerm .= ' AND length(id.identifierValue) = '.strlen($term2);
+							$ocnTerm .= ')';
 							$ocnBetweenFrag[] = '('.$ocnTerm.')';
 						}
 					}
@@ -295,13 +300,13 @@ class OccurrenceEditorManager {
 						if(substr($term,0,1) == '<' || substr($term,0,1) == '>'){
 							$tStr = trim(substr($term,1));
 							if(!is_numeric($tStr)) $tStr = '"'.$tStr.'"';
-							$ocnWhere .= 'OR (o.othercatalognumbers '.substr($term,0,1).' '.$tStr.') ';
+							$ocnWhere .= 'OR (o.othercatalognumbers '.substr($term,0,1).' '.$tStr.') OR (id.identifierValue '.substr($term,0,1).' '.$tStr.') ';
 						}
-						elseif(strpos($term,'%')){
-							$ocnWhere .= 'OR (o.othercatalognumbers LIKE "'.$term.'") ';
+						elseif(strpos($term,'%') !== false){
+							$ocnWhere .= 'OR (o.othercatalognumbers LIKE "'.$term.'") OR (id.identifierValue LIKE "'.$term.'") ';
 						}
 						else{
-							$ocnWhere .= 'OR (o.othercatalognumbers = "'.$term.'") ';
+							$ocnWhere .= 'OR (o.othercatalognumbers = "'.$term.'") OR (id.identifierValue = "'.$term.'") ';
 						}
 					}
 				}
@@ -740,6 +745,12 @@ class OccurrenceEditorManager {
 		}
 		elseif(array_key_exists('woi',$this->qryArr)){
 			$sql .= 'LEFT JOIN images i ON o.occid = i.occid ';
+		}
+		if(strpos($this->sqlWhere,'id.occid')){
+			$sql .= 'INNER JOIN omoccuridentifiers id ON o.occid = id.occid ';
+		}
+		elseif(strpos($this->sqlWhere,'id.identifierValue')){
+			$sql .= 'LEFT JOIN omoccuridentifiers id ON o.occid = id.occid ';
 		}
 		if(strpos($this->sqlWhere,'ul.username')){
 			$sql .= 'LEFT JOIN omoccuredits ome ON o.occid = ome.occid LEFT JOIN userlogin ul ON ome.uid = ul.uid ';
@@ -1557,6 +1568,18 @@ class OccurrenceEditorManager {
 		return $status;
 	}
 
+	public function getIdentifiers(){
+		$retArr = array();
+		$sql = 'SELECT idomoccuridentifiers, identifiername, identifiervalue FROM omoccuridentifiers WHERE occid = '.$this->occid.' ORDER BY sortby ';
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$retArr[$r->idomoccuridentifiers]['name'] = $r->identifiername;
+			$retArr[$r->idomoccuridentifiers]['value'] = $r->identifiervalue;
+		}
+		$rs->free();
+		return $retArr;
+	}
+
 	private function setLoanData(){
 		$sql = 'SELECT l.loanid, l.datedue, i.institutioncode '.
 			'FROM omoccurloanslink ll INNER JOIN omoccurloans l ON ll.loanid = l.loanid '.
@@ -2206,6 +2229,27 @@ class OccurrenceEditorManager {
 			}
 		}
 		return $isEditor;
+	}
+
+	//Form field functions
+	public function getFieldArr(){
+		global $LANG;
+		$fieldArr = array();
+		$panelName = (isset($LANG['COLLECTOR_INFO'])?$LANG['COLLECTOR_INFO']:'Collector Info');
+		$fieldArr[$panelName][0]['catalogNumber']['onChange'][] = "fieldChanged('catalognumber')";
+		if(!defined('CATNUMDUPECHECK') || CATNUMDUPECHECK) $fieldArr[$panelName][0]['catalogNumber']['onChange'][] = 'searchDupesCatalogNumber(this.form,true)';
+		if($isEditor > 2) $fieldArr[$panelName]['catalogNumber']['attr'][] = 'disabled';
+		$fieldArr[$panelName][0]['catalogNumber']['attr'][] = 'autocomplete="off"';
+		$fieldArr[$panelName][0]['catalogNumber']['title'] = (defined('CATALOGNUMBERLABEL')?CATALOGNUMBERLABEL:'Catalog Number');
+		$fieldArr[$panelName][0]['catalogNumber']['type'] = 'text';
+
+		$fieldArr[$panelName][1]['otherCatalogNumbers']['onChange'][] = "fieldChanged('othercatalognumbers')";
+		if(!defined('OTHERCATNUMDUPECHECK') || OTHERCATNUMDUPECHECK) $fieldArr[$panelName][0]['otherCatalogNumbers']['onChange'][] = 'searchDupesOtherCatalogNumbers(this.form)';
+		$fieldArr[$panelName][0]['otherCatalogNumbers']['attr'][] = 'autocomplete="off"';
+		$fieldArr[$panelName][0]['otherCatalogNumbers']['title'] = (defined('OTHERCATALOGNUMBERSLABEL')?OTHERCATALOGNUMBERSLABEL:'Catalog Number');
+		$fieldArr[$panelName][0]['otherCatalogNumbers']['type'] = 'text';
+
+		return $fieldArr;
 	}
 
 	//Misc data support functions

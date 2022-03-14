@@ -532,7 +532,7 @@ class OccurrenceSesar extends Manager {
 
 		if($sesarResultArr['totalCnt']){
 			$this->logOrEcho('Calculating stats...',1);
-			$sql = 'UPDATE igsnverification i INNER JOIN omoccurrences o ON i.igsn = o.occurrenceid SET i.occidInPortal = o.occid WHERE i.occid IS NULL';
+			$sql = 'UPDATE igsnverification i INNER JOIN omoccurrences o ON i.igsn = o.occurrenceid SET i.occidInPortal = o.occid WHERE i.occidInPortal IS NULL';
 			if(!$this->conn->query($sql)){
 				$this->logOrEcho('ERROR updaing IGSN field: '.$this->conn->error,2);
 			}
@@ -710,6 +710,19 @@ class OccurrenceSesar extends Manager {
 			else{
 				$retArr['errCode'] = 3;
 				$ok = false;
+			}
+			$rs->free();
+
+			$sql = 'SELECT identifierValue FROM omoccuridentifiers WHERE (occid = '.$occid.') ORDER BY sortBy';
+			$rs = $this->conn->query($sql);
+			while($r = $rs->fetch_object()){
+				if($r->identifierValue != $catalogNumber && $r->identifierValue != $catalogNumber){
+					$retArr['errCode'] = 2;
+					$catNum = $r->identifierValue;
+					if(isset($retArr['catNum'])) $catNum .= ', '.$retArr['catNum'];
+					$retArr['catNum'] = $catNum;
+					$ok = false;
+				}
 			}
 			$rs->free();
 

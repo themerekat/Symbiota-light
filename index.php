@@ -96,7 +96,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 					$clId = '1';
 
 					//Enter field, specimen, or both to specify whether to use only field or specimen images, or both
-					$imageType = 'field';
+					$imageType = 'both';
 
 					//Enter number of days of most recent images that should be included
 					$numDays = 30;

@@ -62,7 +62,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 	<div id="innertext">
 		<h1></h1>
 		<div style="padding: 0px 10px;">
-			<div style="float:right;width:320px">
+			<div style="float:right;width:320px;margin-left: 20px;">
 				<div id="quicksearchdiv">
 					<!-- -------------------------QUICK SEARCH SETTINGS--------------------------------------- -->
 					<form name="quicksearch" id="quicksearch" action="<?php echo $CLIENT_ROOT; ?>/taxa/index.php" method="get" onsubmit="return verifyQuickSearch(this);">
@@ -102,7 +102,6 @@ header("Content-Type: text/html; charset=".$CHARSET);
 					$numDays = 30;
 
 					//---------------------------DO NOT CHANGE BELOW HERE-----------------------------
-
 					ini_set('max_execution_time', 120);
 					include_once($SERVER_ROOT.'/classes/PluginsManager.php');
 					$pluginManager = new PluginsManager();

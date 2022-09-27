@@ -7,7 +7,7 @@
 				<a href="http://idigbio.org" target="_blank" title="iDigBio"><img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo_idig.png" style="width:150px" /></a>
 				<a href="https://biokic.asu.edu" target="_blank" title="Biodiversity Knowledge Integration Center"><img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo-asu-biokic.png" style="width:180px" /></a>
 			</p>
-			<div style="width:650px;height:50px;margin-top:10px;margin-left:auto;margin-right:auto;margin-bottom:15px;display:table;" >
+			<div style="height:50px;margin-left:auto;margin-right:auto;padding:5px 30px;text-align:center;display:table;" >
 				The PCC, and this data portal, were made possible by funding from the National Science Foundation’s
 				Advancing Digitization of Biological Collections (ADBC) program, grant numbers
 				<a href="http://www.nsf.gov/awardsearch/showAward?AWD_ID=1802504&HistoricalAwards=false" target="_blank">1802504</a>,
@@ -20,8 +20,9 @@
 				<a href="http://www.nsf.gov/awardsearch/showAward?AWD_ID=1802446&HistoricalAwards=false" target="_blank">1802446</a>,
 				<a href="http://www.nsf.gov/awardsearch/showAward?AWD_ID=1802305&HistoricalAwards=false" target="_blank">1802305</a>.
 			</div>
-			<div style="width:650px;height:50px;margin-left:auto;margin-right:auto;margin-bottom:15px;display:table;" >
-				The pteridoportal taxonomic thesaurus is based on the <a href="https://worldplants.webarchiv.kit.edu/ferns/" target="_blank">Checklist of Ferns and Lycophytes of the World</a>, generously provided by Michael Hassler.
+			<div style="height:50px;margin-left:auto;margin-right:auto;padding:5px 30px;text-align:center;display:table;" >
+				The pteridoportal taxonomic thesaurus is based on the
+				<a href="https://worldplants.webarchiv.kit.edu/ferns/" target="_blank">Checklist of Ferns and Lycophytes of the World</a>, generously provided by Michael Hassler.
 			</div>
 		</td>
 	</tr>

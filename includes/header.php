@@ -96,6 +96,21 @@ else include_once($SERVER_ROOT.'/content/lang/header.'.$LANG_TAG.'.php');
 						</ul>
 					</li>
 					<li>
+						<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php" >Inventories</a>
+						<ul>
+							<li>
+								<a href="<?php echo $CLIENT_ROOT; ?>/checklists/index.php" >All Public Checklists</a>
+							</li>
+							<li>
+								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=1" >UCSB Natural Reserve System</a>
+							</li>
+							<li>
+								<a href="<?php echo $CLIENT_ROOT; ?>/projects/index.php?pid=2" >UC Santa Barbara Campus</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+					<li>
 						<a href="https://www.globalbioticinteractions.org/bigbee" target="_blank">Global Biotic Interactions</a>
 					</li>
 					<li>

@@ -3,7 +3,7 @@
 	<tr>
 		<td id="footer" colspan="3">
 			<p>
-				<a href="https://www.ccber.ucsb.edu" target="_blank"><img src="<?php echo $CLIENT_ROOT; ?>/images/layout/UC_Santa_Barbara_Wordmark_Navy_RGB.png" style="width:250px" /></a>
+				<a href="https://www.ccber.ucsb.edu" target="_blank"><img src="<?php echo $CLIENT_ROOT; ?>/images/layout/CheadleCenterlogo.png" style="width:250px" /></a>
 				<a href="https://www.nsf.gov" target="_blank"><img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo_nsf.gif" style="width:80px" /></a>
 				<a href="http://idigbio.org" target="_blank" title="iDigBio"><img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo_idig.png" style="width:160px" /></a>
 				<a href="https://biokic.asu.edu" target="_blank" title="Biodiversity Knowledge Integration Center"><img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo-asu-biokic.png" style="width:210px" /></a>

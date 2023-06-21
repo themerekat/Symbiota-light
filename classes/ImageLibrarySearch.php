@@ -262,7 +262,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		if($this->taxaStr) $retStr .= '&taxa='.$this->taxaStr;
 		if($this->useThes) $retStr .= '&usethes=1';
 		if($this->photographerUid) $retStr .= '&phuid='.$this->photographerUid;
-		if($this->tagExistance) $retStr .= '&tagExistance=1';
+		$retStr .= '&tagExistance='.$this->tagExistance;
 		if($this->tag) $retStr .= '&tag='.urlencode($this->tag);
 		if($this->keywords) $retStr .= '&keywords='.$this->keywords;
 		if($this->imageCount) $retStr .= '&imagecount='.$this->imageCount;

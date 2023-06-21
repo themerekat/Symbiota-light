@@ -9,7 +9,8 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	private $taxaStr;
 	private $useThes = 1;
 	private $photographerUid;
-	private $tags;
+	private $tagExistance = 0;
+	private $tag;
 	private $keywords;
 	private $imageCount = 'all';
 	private $imageType = 0;
@@ -18,9 +19,10 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	private $tidFocus;
 	private $searchSupportManager = null;
 	private $sqlWhere = '';
+	private $errorStr = '';
 
-	function __construct() {
-		parent::__construct();
+	function __construct($type = 'readonly') {
+		parent::__construct($type);
 		if(array_key_exists('TID_FOCUS', $GLOBALS) && preg_match('/^[\d,]+$/', $GLOBALS['TID_FOCUS'])){
 			$this->tidFocus = $GLOBALS['TID_FOCUS'];
 		}
@@ -91,33 +93,6 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 			$rs3->free();
 		}
 		return $retArr;
-	}
-
-	private function getSqlBase(){
-		$sql = 'FROM images i ';
-		if($this->taxaArr){
-			$sql .= 'INNER JOIN taxa t ON i.tid = t.tid ';
-		}
-		else{
-			$sql .= 'LEFT JOIN taxa t ON i.tid = t.tid ';
-		}
-		if(strpos($this->sqlWhere,'ts.taxauthid')){
-			$sql .= 'INNER JOIN taxstatus ts ON i.tid = ts.tid ';
-		}
-		if(strpos($this->sqlWhere,'e.taxauthid') || $this->tidFocus){
-			$sql .= 'INNER JOIN taxaenumtree e ON i.tid = e.tid ';
-		}
-		$sql .= 'LEFT JOIN omoccurrences o ON i.occid = o.occid ';
-		if($this->imageType == 1 || $this->imageType == 2){
-			$sql .= 'LEFT JOIN omcollections c ON o.collid = c.collid ';
-		}
-		if($this->tags){
-			$sql .= 'INNER JOIN imagetag it ON i.imgid = it.imgid ';
-		}
-		if($this->keywords){
-			$sql .= 'INNER JOIN imagekeywords ik ON i.imgid = ik.imgid ';
-		}
-		return $sql;
 	}
 
 	private function setSqlWhere(){
@@ -199,8 +174,10 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		if($this->photographerUid){
 			$sqlWhere .= 'AND (i.photographeruid IN('.$this->photographerUid.')) ';
 		}
-		if($this->tags){
-			$sqlWhere .= 'AND (it.keyvalue = "'.$this->cleanInStr($this->tags).'") ';
+		if($this->tag){
+			$sqlWhere .= 'AND i.imgid ';
+			if(!$this->tagExistance) $sqlWhere .= 'NOT ';
+			$sqlWhere .= 'IN(SELECT imgid FROM imagetag WHERE keyvalue = "'.$this->cleanInStr($this->tag).'") ';
 		}
 		if($this->keywords){
 			$keywordArr = explode(";",$this->keywords);
@@ -212,12 +189,8 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		}
 		if($this->imageType){
 			if($this->imageType == 1){
-				//Specimen Images
-				$sqlWhere .= 'AND (i.occid IS NOT NULL) AND (c.colltype = "Preserved Specimens") ';
-			}
-			elseif($this->imageType == 2){
-				//Image Vouchered Observations
-				$sqlWhere .= 'AND (i.occid IS NOT NULL) AND (c.colltype != "Preserved Specimens") ';
+				//Specimen or Vouchered Observations Images
+				$sqlWhere .= 'AND (i.occid IS NOT NULL) ';
 			}
 			elseif($this->imageType == 3){
 				//Field Images (lacking specific locality details)
@@ -231,13 +204,26 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	private function setRecordCnt(){
 		$sql = 'SELECT COUNT(DISTINCT i.imgid) AS cnt ';
 		if($this->imageCount){
-			if($this->imageCount == 'taxon') $sql = "SELECT COUNT(DISTINCT i.tid) AS cnt ";
-			elseif($this->imageCount == 'specimen') $sql = "SELECT COUNT(DISTINCT i.occid) AS cnt ";
-			else $sql = "SELECT COUNT(DISTINCT i.imgid) AS cnt ";
+			if($this->imageCount == 'taxon') $sql = 'SELECT COUNT(DISTINCT i.tid) AS cnt ';
+			elseif($this->imageCount == 'specimen') $sql = 'SELECT COUNT(DISTINCT i.occid) AS cnt ';
+			else $sql = 'SELECT COUNT(DISTINCT i.imgid) AS cnt ';
 		}
-		$sql .= 'FROM images i ';
+		$sql .= $this->getSqlBase().$this->sqlWhere;
+		//echo '<div>Count sql: '.$sql.'</div>';
+		$result = $this->conn->query($sql);
+		if($row = $result->fetch_object()){
+			$this->recordCount = $row->cnt;
+		}
+		$result->free();
+	}
+
+	private function getSqlBase(){
+		$sql = 'FROM images i ';
 		if($this->taxaArr){
 			$sql .= 'INNER JOIN taxa t ON i.tid = t.tid ';
+		}
+		else{
+			$sql .= 'LEFT JOIN taxa t ON i.tid = t.tid ';
 		}
 		if(strpos($this->sqlWhere,'ts.taxauthid')){
 			$sql .= 'INNER JOIN taxstatus ts ON i.tid = ts.tid ';
@@ -245,25 +231,16 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		if(strpos($this->sqlWhere,'e.taxauthid') || $this->tidFocus){
 			$sql .= 'INNER JOIN taxaenumtree e ON i.tid = e.tid ';
 		}
-		if($this->tags){
-			$sql .= 'INNER JOIN imagetag it ON i.imgid = it.imgid ';
-		}
 		if($this->keywords){
 			$sql .= 'INNER JOIN imagekeywords ik ON i.imgid = ik.imgid ';
 		}
-		if($this->imageType == 1 || $this->imageType == 2){
-			$sql .= 'INNER JOIN omoccurrences o ON i.occid = o.occid INNER JOIN omcollections c ON o.collid = c.collid ';
-		}
-		elseif($this->dbStr && $this->dbStr != 'all'){
+		if($this->dbStr && $this->dbStr != 'all'){
 			$sql .= 'INNER JOIN omoccurrences o ON i.occid = o.occid ';
 		}
-		$sql .= $this->sqlWhere;
-		//echo "<div>Count sql: ".$sql."</div>";
-		$result = $this->conn->query($sql);
-		if($row = $result->fetch_object()){
-			$this->recordCount = $row->cnt;
+		else{
+			$sql .= 'LEFT JOIN omoccurrences o ON i.occid = o.occid ';
 		}
-		$result->free();
+		return $sql;
 	}
 
 	public function getFullCollectionList($catId = ''){
@@ -280,12 +257,13 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	//Misc support functions
 	public function getQueryTermStr(){
 		$retStr = '';
-		if($this->dbStr) $retStr .= '&db='.$this->dbStr;
+		if($this->dbStr) $retStr .= '&db[]='.$this->dbStr;
 		if($this->taxonType) $retStr .= '&taxontype='.$this->taxonType;
 		if($this->taxaStr) $retStr .= '&taxa='.$this->taxaStr;
 		if($this->useThes) $retStr .= '&usethes=1';
 		if($this->photographerUid) $retStr .= '&phuid='.$this->photographerUid;
-		if($this->tags) $retStr .= '&tags='.urlencode($this->tags);
+		if($this->tagExistance) $retStr .= '&tagExistance=1';
+		if($this->tag) $retStr .= '&tag='.urlencode($this->tag);
 		if($this->keywords) $retStr .= '&keywords='.$this->keywords;
 		if($this->imageCount) $retStr .= '&imagecount='.$this->imageCount;
 		if($this->imageType) $retStr .= '&imagetype='.$this->imageType;
@@ -319,6 +297,31 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		return implode(', ',$retArr);
 	}
 
+	//Action editing functions
+	public function batchAssignImageTag($postArr){
+		$status = false;
+		$imageArr = $postArr['imgid'];
+		$tagName = $postArr['imgTagAction'];
+		if($imageArr && $tagName){
+			foreach($imageArr as $imgid){
+				if(is_numeric($imgid)){
+					$sql = 'INSERT INTO imagetag(imgid, keyValue) VALUE(?, ?)';
+					if($stmt = $this->conn->prepare($sql)){
+						$stmt->bind_param('is', $imgid, $tagName);
+						$stmt->execute();
+						if($stmt->affected_rows) $status = true;
+						elseif($stmt->error){
+							$this->errorStr = 'ERROR adding image tag: '.$this->error;
+							$status = false;
+						}
+						$stmt->close();
+					}
+				}
+			}
+		}
+		return $status;
+	}
+
 	//Listing functions
 	public function getPhotographerUidArr(){
 		$retArr = array();
@@ -342,10 +345,10 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 
 	public function getTagArr(){
 		$retArr = array();
-		$sql = 'SELECT DISTINCT keyvalue FROM imagetag ORDER BY keyvalue ';
+		$sql = 'SELECT tagkey, CONCAT_WS(" - ",shortlabel,tagDescription) as displayText FROM imagetagkey ORDER BY tagkey';
 		if($rs = $this->conn->query($sql)){
 			while($r = $rs->fetch_object()){
-				$retArr[] = $r->keyvalue;
+				$retArr[$r->tagkey] = $r->displayText;
 			}
 		}
 		$rs->free();
@@ -390,7 +393,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 
 	public function setTaxaStr($str){
 		if(strpos($str,'<') === false){
-			$this->taxaStr = filter_var(trim($str), FILTER_SANITIZE_STRING);
+			$this->taxaStr = trim($str);
 			if($this->taxaStr){
 				if(is_numeric($this->taxaStr)) $this->resetTaxaStr();
 				$this->setTaxonRequestVariable(array('taxa'=>$this->taxaStr,'taxontype'=>$this->taxonType,'usethes'=>$this->useThes));
@@ -418,16 +421,20 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		return $this->photographerUid;
 	}
 
-	public function setTags($t){
-		if(strpos($t,'<') === false) $this->tags = filter_var($t, FILTER_SANITIZE_STRING);
+	public function setTagExistance($t){
+		$this->tagExistance = $t;
 	}
 
-	public function getTags(){
-		return $this->tags;
+	public function setTag($t){
+		$this->tag = $t;
+	}
+
+	public function getTag(){
+		return $this->tag;
 	}
 
 	public function setKeywords($k){
-		if(strpos($k,'<') === false) $this->keywords = filter_var($k, FILTER_SANITIZE_STRING);
+		$this->keywords = $k;
 	}
 
 	public function getKeywords(){
@@ -454,17 +461,8 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		return $this->recordCount;
 	}
 
-	public function getSearchTermDisplayStr(){
-		$retStr = '';
-		if($this->dbStr) $retStr .= $this->getCollectionStr($this->dbStr);
-		if($this->taxaStr) $retStr .= '; '.$this->taxaStr;
-		if($this->photographerUid) $retStr .= '; '.$this->getPhotographerStr($this->photographerUid);
-		if($this->tags) $retStr .= '; '.$this->tags;
-		if($this->keywords) $retStr .= '; '.$this->keywords;
-		if($this->imageType == 1) $retStr .= '; Limit to specimens';
-		elseif($this->imageType == 2) $retStr .= '; Limit to observations';
-		elseif($this->imageType == 3) $retStr .= '; Limit to field images';
-		return htmlspecialchars(trim($retStr,';, '));
+	public function getErrorStr(){
+		return $this->errorStr;
 	}
 }
 ?>

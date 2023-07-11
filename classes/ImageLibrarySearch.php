@@ -4,7 +4,7 @@ include_once($SERVER_ROOT.'/classes/OccurrenceSearchSupport.php');
 
 class ImageLibrarySearch extends OccurrenceTaxaManager{
 
-	private $dbStr;
+	private $dbStr = '';
 	private $taxonType = 2;
 	private $taxaStr;
 	private $useThes = 1;
@@ -32,7 +32,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		parent::__destruct();
 	}
 
-	public function getImageArr($pageRequest,$cntPerPage){
+	public function getImageArr($pageRequest, $cntPerPage){
 		$retArr = Array();
 		$this->setSqlWhere();
 		$this->setRecordCnt();
@@ -176,8 +176,12 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 		}
 		if($this->tag){
 			$sqlWhere .= 'AND i.imgid ';
-			if(!$this->tagExistance) $sqlWhere .= 'NOT ';
-			$sqlWhere .= 'IN(SELECT imgid FROM imagetag WHERE keyvalue = "'.$this->cleanInStr($this->tag).'") ';
+			$tagFrag = '';
+			if($this->tag != 'ANYTAG') $tagFrag = 'WHERE keyvalue = "'.$this->cleanInStr($this->tag).'"';
+			if(!$this->tagExistance){
+				$sqlWhere .= 'NOT ';
+			}
+			$sqlWhere .= 'IN(SELECT imgid FROM imagetag '.$tagFrag.')';
 		}
 		if($this->keywords){
 			$keywordArr = explode(";",$this->keywords);
@@ -257,7 +261,7 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	//Misc support functions
 	public function getQueryTermStr(){
 		$retStr = '';
-		if($this->dbStr) $retStr .= '&db[]='.$this->dbStr;
+		if($this->dbStr) $retStr .= '&db='.$this->dbStr;
 		if($this->taxonType) $retStr .= '&taxontype='.$this->taxonType;
 		if($this->taxaStr) $retStr .= '&taxa='.$this->taxaStr;
 		if($this->useThes) $retStr .= '&usethes=1';
@@ -379,8 +383,12 @@ class ImageLibrarySearch extends OccurrenceTaxaManager{
 	}
 
 	//Setters and getters
+	public function getDbStr(){
+		return $this->dbStr;
+	}
+
 	public function setCollectionVariables($reqArr){
-		$this->dbStr = OccurrenceSearchSupport::getDbRequestVariable($reqArr);
+		$this->dbStr = trim(OccurrenceSearchSupport::getDbRequestVariable(), '; ');
 	}
 
 	public function setTaxonType($t){

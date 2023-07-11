@@ -1,7 +1,7 @@
 <?php
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ImageLibrarySearch.php');
-if($LANG_TAG != 'en' && file_exists($SERVER_ROOT.'/content/lang/imagelib/search.'.$LANG_TAG.'.php')) $LANG_TAG = 'en';
+if($LANG_TAG != 'en' && !file_exists($SERVER_ROOT.'/content/lang/imagelib/search.'.$LANG_TAG.'.php')) $LANG_TAG = 'en';
 include_once($SERVER_ROOT.'/content/lang/imagelib/search.'.$LANG_TAG.'.php');
 header('Content-Type: text/html; charset='.$CHARSET);
 
@@ -129,7 +129,7 @@ if($action == 'batchAssignTag'){
 					elseif(array_key_exists('CollAdmin', $USER_RIGHTS) || array_key_exists('CollEditor', $USER_RIGHTS)) $isEditor = 2;
 					elseif(array_key_exists('TaxonProfile', $USER_RIGHTS)) $isEditor = 2;
 					if($isEditor){
-						echo '<div style="float:right"><a href="#" onclick="$(\'.editor-div\').toggle()"><img class="icon-img" style="width:15px;" src="../images/edit.png"></a></div>';
+						echo '<div id="edit-div" style="float:right"><a href="#" onclick="$(\'.editor-div\').toggle()"><img class="icon-img" style="width:15px;" src="../images/edit.png"></a></div>';
 					}
 					?>
 					<div id="criteria-div">
@@ -147,13 +147,12 @@ if($action == 'batchAssignTag'){
 								<input id="taxa" name="taxa" type="text" style="width:450px;" value="<?php echo $imgLibManager->getTaxaStr(); ?>" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" autocomplete="off" />
 							</div>
 							<div style="float:left;margin-left:10px;" >
-								<input name="usethes" type="checkbox" value="1" <?php if(!$action || $imgLibManager->getUseThes()) echo 'CHECKED'; ?> ><?php echo $LANG['INCLUDE_SYN']; ?>
+								<input name="usethes" type="checkbox" value="1" <?php if(!$action || $imgLibManager->getUseThes()) echo 'CHECKED'; ?> > <?php echo $LANG['INCLUDE_SYN']; ?>
 							</div>
 						</div>
 						<div class="row-div">
 							<label><?php echo $LANG['PHOTOGRAPHER'] ?></label>:
 							<select name="phuid">
-								<option value="">All Image Contributors</option>
 								<option value="">-----------------------------</option>
 								<?php
 								$uidList = $imgLibManager->getPhotographerUidArr();
@@ -167,14 +166,14 @@ if($action == 'batchAssignTag'){
 						if($tagArr = $imgLibManager->getTagArr()){
 							?>
 							<div class="row-div">
-								<label>Image Tags</label>:
+								<label><?php echo $LANG['IMAGE_TAGS']; ?></label>:
 								<select name="tagExistance">
-									<option value="1">with</option>
-									<option value="0" <?php echo ($tagExistance?'':'SELECTED'); ?>>without</option>
+									<option value="1"><?php echo $LANG['WITH']; ?></option>
+									<option value="0" <?php echo ($tagExistance?'':'SELECTED'); ?>><?php echo $LANG['WITHOUT'];?></option>
 								</select>
 								<select name="tag" >
-									<option value="">Select Tag</option>
 									<option value="">--------------</option>
+									<option value="ANYTAG" <?php if($tag == 'ANYTAG') echo 'selected'; ?>><?php echo $LANG['ANY_TAG']; ?></option>
 									<?php
 									foreach($tagArr as $tagKey => $displayText){
 										echo '<option value="'.$tagKey.'" '.($tag==$tagKey?'SELECTED ':'').'>'.$displayText.'</option>';
@@ -197,40 +196,50 @@ if($action == 'batchAssignTag'){
 						$obsArr = (isset($collList['obs'])?$collList['obs']:null);
 						?>
 						<div class="row-div">
-							<label>Image Counts</label>:
+							<label><?php echo $LANG['IMAGE_COUNTS']; ?></label>:
 							<select id="imagecount" name="imagecount">
-								<option value="all" <?php echo ($imgLibManager->getImageCount()=='all'?'SELECTED ':''); ?>>All images</option>
-								<option value="taxon" <?php echo ($imgLibManager->getImageCount()=='taxon'?'SELECTED ':''); ?>>One per taxon</option>
+								<option value="all" <?php echo ($imgLibManager->getImageCount()=='all'?'SELECTED ':''); ?>><?php echo $LANG['ALL_IMAGES']; ?></option>
+								<option value="taxon" <?php echo ($imgLibManager->getImageCount()=='taxon'?'SELECTED ':''); ?>><?php echo $LANG['ONE_PER_TAXON']; ?></option>
 								<?php
 								if($specArr){
 									?>
-									<option value="specimen" <?php echo ($imgLibManager->getImageCount()=='specimen'?'SELECTED ':''); ?>>One per specimen</option>
+									<option value="specimen" <?php echo ($imgLibManager->getImageCount()=='specimen'?'SELECTED ':''); ?>><?php echo $LANG['ONE_PER_SPEC']; ?></option>
 									<?php
 								}
 								?>
 							</select>
 						</div>
 						<div class="row-div">
+							<label><?php echo $LANG['IMAGE_TYPE']; ?></label>:
+							<select name="imagetype" onchange="imageTypeChanged(this)">
+								<option value="0"><?php echo $LANG['ALL_IMAGES']; ?></option>
+								<option value="1" <?php echo ($imgLibManager->getImageType() == 1?'SELECTED':''); ?>><?php echo $LANG['SPECIMEN_VOUCHERED']; ?></option>
+								<option value="3" <?php echo ($imgLibManager->getImageType() == 3?'SELECTED':''); ?>><?php echo $LANG['FIELD_IMAGES']; ?></option>
+							</select>
+						</div>
+						<div class="row-div">
 							<div style="margin-bottom:5px;float:left;">
-								<label>Image Type</label>:
-								<select name="imagetype" onchange="imageTypeChanged(this)">
-									<option value="0">All Images</option>
-									<option value="1" <?php echo ($imgLibManager->getImageType() == 1?'SELECTED':''); ?>>Specimen/Vouchered Images</option>
-									<option value="3" <?php echo ($imgLibManager->getImageType() == 3?'SELECTED':''); ?>>Field Images (lacking specific locality details)</option>
+								<label><?php echo $LANG['COUNT_PER_PAGE']; ?></label>:
+								<select name="cntperpage">
+									<option <?php echo ($cntPerPage==200?'selected':''); ?>>200</option>
+									<option <?php echo ($cntPerPage==400?'selected':''); ?>>400</option>
+									<option <?php echo ($cntPerPage==600?'selected':''); ?>>600</option>
+									<option <?php echo ($cntPerPage==800?'selected':''); ?>>800</option>
+									<option <?php echo ($cntPerPage==1000?'selected':''); ?>>1000</option>
 								</select>
 							</div>
 							<div style="margin:0px 40px;float:left">
-								<button name="submitaction" type="submit" value="search">Load Images</button>
+								<button name="submitaction" type="submit" value="search"><?php echo $LANG['LOAD_IMAGES']; ?></button>
 							</div>
 						</div>
 						<?php
 						if($specArr || $obsArr){
 							$allChecked = '';
-							if(!isset($_REQUEST['db']) || in_array('all', $_REQUEST['db'])) $allChecked = 'checked';
+							if(!$imgLibManager->getDbStr() || $imgLibManager->getDbStr() == 'all') $allChecked = 'checked';
 							?>
 							<div id="collection-div" style="margin:15px;clear:both;display:<?php echo ($imgLibManager->getImageType() == 1 || $imgLibManager->getImageType() == 2?'':'none'); ?>">
 								<fieldset>
-									<legend>Collections</legend>
+									<legend><?php echo $LANG['COLLECTIONS']; ?></legend>
 									<div id="specobsdiv">
 										<div style="margin:0px 0px 10px 5px;">
 											<input id="dballcb" name="db[]" class="specobs" value='all' type="checkbox" onclick="selectAll(this);" <?php echo $allChecked ?> />
@@ -253,11 +262,10 @@ if($action == 'batchAssignTag'){
 						?>
 						<div class="editor-div" style="display:none; clear: both;">
 							<fieldset>
-							<legend>Action Panel</legend>
+							<legend><?php echo $LANG['ACTION_PANEL']; ?></legend>
 								<div class="row-div">
-									<label>Image Tag:</label>
+									<label><?php echo $LANG['IMAGE_TAG']; ?>:</label>
 									<select name="imgTagAction">
-										<option value="">Select Tag</option>
 										<option value="">---------------------</option>
 										<?php
 										foreach($tagArr as $tagKey => $displayText){
@@ -265,7 +273,7 @@ if($action == 'batchAssignTag'){
 										}
 										?>
 									</select>
-									<button name="submitaction" type="submit" value="batchAssignTag" onclick="return validateBatchActionBtn(this.form)">Batch Assign Tag</button>
+									<button name="submitaction" type="submit" value="batchAssignTag" onclick="return validateBatchActionBtn(this.form)"><?php echo $LANG['BATCH_ASSIGN']; ?></button>
 								</div>
 								<div class="row-div">
 									<input id="imgselectall" name="imgselectall" type="checkbox" onclick="selectAllImages(this);" />
@@ -281,20 +289,21 @@ if($action == 'batchAssignTag'){
 			</div>
 			<?php
 			if($action){
+				$isEditorOfAtLeastOne = false;
 				?>
 				<div id="imagesdiv">
 					<div id="imagebox">
 						<?php
-						$imageArr = $imgLibManager->getImageArr($pageNumber,$cntPerPage);
+						$imageArr = $imgLibManager->getImageArr($pageNumber, $cntPerPage);
 						$recordCnt = $imgLibManager->getRecordCnt();
 						if($imageArr){
 							$lastPage = ceil($recordCnt / $cntPerPage);
 							$startPage = ($pageNumber > 4?$pageNumber - 4:1);
 							$endPage = ($lastPage > $startPage + 9?$startPage + 9:$lastPage);
-							$url = 'search.php?'.$imgLibManager->getQueryTermStr().'&submitaction=search';
+							$url = 'search.php?'.$imgLibManager->getQueryTermStr().'&cntperpage='.$cntPerPage.'&submitaction=search';
 							$pageBar = '<div style="float:left" >';
 							if($startPage > 1){
-								$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="'.$url.'&page=1">First</a></span>';
+								$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="'.$url.'&page=1">'.$LANG['FIRST'].'</a></span>';
 								$pageBar .= '<span class="pagination" style="margin-right:5px;"><a href="'.$url.'&page='.(($pageNumber - 10) < 1 ?1:$pageNumber - 10).'">&lt;&lt;</a></span>';
 							}
 							for($x = $startPage; $x <= $endPage; $x++){
@@ -307,13 +316,13 @@ if($action == 'batchAssignTag'){
 							}
 							if(($lastPage - $startPage) >= 10){
 								$pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="'.$url.'&page='.(($pageNumber + 10) > $lastPage?$lastPage:($pageNumber + 10)).'">&gt;&gt;</a></span>';
-								if($recordCnt < 10000) $pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="'.$url.'&page='.$lastPage.'">Last</a></span>';
+								if($recordCnt < 10000) $pageBar .= '<span class="pagination" style="margin-left:5px;"><a href="'.$url.'&page='.$lastPage.'">'.$LANG['LAST'].'</a></span>';
 							}
 							$pageBar .= '</div><div style="float:right;margin-top:4px;margin-bottom:8px;">';
 							$beginNum = ($pageNumber - 1)*$cntPerPage + 1;
 							$endNum = $beginNum + $cntPerPage - 1;
 							if($endNum > $recordCnt) $endNum = $recordCnt;
-							$pageBar .= "Page ".$pageNumber.", records ".number_format($beginNum)."-".number_format($endNum)." of ".number_format($recordCnt)."</div>";
+							$pageBar .= $LANG['PAGE'].' '.$pageNumber.', '.$LANG['RECORDS'].' ' . number_format($beginNum).'-'.number_format($endNum).' '.$LANG['OF'].' '.number_format($recordCnt).'</div>';
 							$paginationStr = $pageBar;
 							echo '<div style="width:100%;">'.$paginationStr.'</div>';
 							echo '<div style="clear:both;margin:5 0 5 0;"><hr /></div>';
@@ -352,19 +361,22 @@ if($action == 'batchAssignTag'){
 									</div>
 									<div class="details-div">
 										<?php
-										if($isEditor == 2){
+										$isEditorThis = false;
+										if($isEditor == 1) $isEditorThis = true;
+										elseif($isEditor == 2){
 											if($imgArr['occid']){
 												$collid = $occArr[$imgArr['occid']]['collid'];
 												if($collid){
-													if(array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'])) $isEditor = true;
-													elseif(array_key_exists('CollEditor', $USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'])) $isEditor = true;
+													if(array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'])) $isEditorThis = true;
+													elseif(array_key_exists('CollEditor', $USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollEditor'])) $isEditorThis = true;
 												}
 											}
 											else{
-												if(array_key_exists('TaxonProfile', $USER_RIGHTS)) $isEditor = true;
+												if(array_key_exists('TaxonProfile', $USER_RIGHTS)) $isEditorThis = true;
 											}
 										}
-										if($isEditor){
+										if($isEditorThis){
+											$isEditorOfAtLeastOne = true;
 											echo '<div class="editor-div" style="display:none;margin-top:3px;"><input name="imgid[]" type="checkbox" value="'.$imgId.'"></div>';
 										}
 										$sciname = $imgArr['sciname'];
@@ -403,9 +415,9 @@ if($action == 'batchAssignTag'){
 								</div>
 								<?php
 							}
-							echo "</div>";
+							echo '</div>';
 							if($lastPage > $startPage){
-								echo "<div style='clear:both;margin:5 0 5 0;'><hr /></div>";
+								echo '<div style="clear:both;margin:5 0 5 0;"><hr /></div>';
 								echo '<div style="width:100%;">'.$paginationStr.'</div>';
 							}
 							?>
@@ -413,12 +425,13 @@ if($action == 'batchAssignTag'){
 							<?php
 						}
 						else{
-							echo '<h3>No images exist matching your search criteria. Please modify your search and try again.</h3>';
+							echo '<h3>'.$LANG['NO_IMAGES'].'.</h3>';
 						}
 						?>
 					</div>
 				</div>
 				<?php
+				if(!$isEditorOfAtLeastOne) echo '<script type="text/javascript">$(".editor-div").hide();$("#edit-div").hide();</script>';
 			}
 			?>
 		</form>

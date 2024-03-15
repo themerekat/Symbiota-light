@@ -86,10 +86,8 @@ class OccurrenceSearchSupport {
 
 	public function outputFullCollArr($collGrpArr, $targetCatID = '', $displayIcons = true, $displaySearchButtons = true){
 		global $CLIENT_ROOT, $LANG;
-		$catSelArr = array();
-		$collSelArr = array();
-		if(isset($_POST['cat'])) $catSelArr = $_POST['cat'];
-		if(isset($_POST['db'])) $collSelArr = $_POST['db'];
+		$catSelArr = $this->getDbRequestArr('cat');
+		$collSelArr = $this->getDbRequestArr('db');
 		$targetCatArr = array();
 		$targetCatID = (string)$targetCatID;
 		if($targetCatID != '') $targetCatArr = explode(',', $targetCatID);
@@ -135,7 +133,7 @@ class OccurrenceSearchSupport {
 								$catSelected = false;
 								if(!$catSelArr && !$collSelArr) $catSelected = true;
 								elseif(in_array($catid, $catSelArr)) $catSelected = true;
-								echo '<input data-role="none" id="cat-'.$idStr.'-Input" name="cat[]" value="'.$catid.'" type="checkbox" onclick="selectAllCat(this,\'cat-'.$idStr.'\')" '.($catSelected?'checked':'').' />';
+								echo '<input data-role="none" id="cat-'.$idStr.'-Input" name="cat[]" value="'.$catid.'" type="checkbox" onclick="selectAllCat(this,\'cat-'.$idStr.'\')" '.($catSelected||array_intersect(array_keys($catArr), $collSelArr)?'checked':'').' />';
 								?>
 							</div>
 						</td>
@@ -181,7 +179,11 @@ class OccurrenceSearchSupport {
 											?>
 											<td style="width:25px;padding-top:8px;">
 												<?php
-												echo '<input data-role="none" name="db[]" value="'.$collid.'" type="checkbox" class="cat-'.$idStr.'" onclick="unselectCat(\'cat-'.$idStr.'-Input\')" '.($catSelected || !$collSelArr || in_array($collid, $collSelArr)?'checked':'').' />';
+												$collSelected = false;
+												if(!$catSelArr && !$collSelArr) $collSelected = true;
+												elseif($catSelected && !$collSelArr) $collSelected = true;
+												elseif(in_array($collid, $collSelArr)) $collSelected = true;
+												echo '<input data-role="none" name="db[]" value="'.$collid.'" type="checkbox" class="cat-'.$idStr.'" onclick="unselectCat(\'cat-'.$idStr.'-Input\')" '.($collSelected?'checked':'').' />';
 												?>
 											</td>
 											<td>
@@ -240,7 +242,10 @@ class OccurrenceSearchSupport {
 						?>
 						<td style="width:25px;padding-top:8px;">
 							<?php
-							echo '<input data-role="none" name="db[]" value="'.$collid.'" type="checkbox" onclick="uncheckAll()" '.(!$collSelArr || in_array($collid, $collSelArr)?'checked':'').' />';
+							$collSelected = false;
+							if(!$collSelArr) $collSelected = true;
+							elseif(in_array($collid, $collSelArr)) $collSelected = true;
+							echo '<input data-role="none" name="db[]" value="'.$collid.'" type="checkbox" onclick="uncheckAll()" '.($collSelected?'checked':'').' />';
 							?>
 						</td>
 						<td>
@@ -284,23 +289,51 @@ class OccurrenceSearchSupport {
 		$this->collArrIndex++;
 	}
 
-	public static function getDbRequestVariable($reqArr){
-		$dbStr = $reqArr['db'];
-		if(is_array($dbStr)) $dbStr = implode(',',array_unique($dbStr)).';';
-		else $dbStr = $dbStr;
-		if(strpos($dbStr,'allspec') !== false) $dbStr = 'allspec';
-		elseif(strpos($dbStr,'allobs') !== false) $dbStr = 'allobs';
-		elseif(strpos($dbStr,'all') !== false) $dbStr = 'all';
-		if(substr($dbStr,0,3) != 'all' && array_key_exists('cat',$reqArr) && $reqArr['cat']){
-			$catArr = array();
-			$catid = $reqArr['cat'];
-			if(is_string($catid)) $catArr = Array($catid);
-			else $catArr = $catid;
-			if(!$dbStr) $dbStr = ';';
-			$dbStr .= implode(',',$catArr);
+	private function getDbRequestArr($target){
+		$input = null;
+		if(isset($_REQUEST['db'])){
+			// input might be an array, single number, or string of integers concatenate by commas
+			$input = $_REQUEST['db'];
+			if(is_array($input)) $input = implode(',', $input);
+			// if semicolon exists, integers before semicolon are db IDs and after are cat IDs
+			$tokens = explode(';', $input);
+			if($target == 'cat'){
+				if(count($tokens) > 1) $input = $tokens[1];
+				else $input = '';
+			}
+			else $input = $tokens[0];
 		}
-		if(!$dbStr) $dbStr = 'all';
-		if(!preg_match('/^[a-z0-9,;]+$/', $dbStr)) $dbStr = 'all';
+		if($target == 'cat' && isset($_REQUEST['cat'])){
+			$catInput = $_REQUEST['cat'];
+			if(is_array($catInput)) $catInput = implode(',', $catInput);
+			$input .= ','.$catInput;
+		}
+		$input = trim($input, ',; ');
+		if(!preg_match('/^[a-z0-9,]+$/', $input)) $input = '';
+		$retArr = array();
+		if($input) $retArr = explode(',', $input);
+		return $retArr;
+	}
+
+	public static function getDbRequestVariable(){
+		$dbStr = '';
+		if(isset($_REQUEST['db'])){
+			$dbStr = $_REQUEST['db'];
+			if(is_array($dbStr)){
+				$dbArr = array_unique($dbStr);
+				$dbStr = '';
+				foreach($dbArr as $v){
+					if($v != 'all') $dbStr .= ','.$v;
+				}
+				$dbStr = trim($dbStr, ',; ');
+			}
+			if(strpos($dbStr,'allspec') !== false) $dbStr = 'allspec';
+			elseif(strpos($dbStr,'allobs') !== false) $dbStr = 'allobs';
+		}
+		if(($p = strpos($dbStr, ';')) !== false){
+			$dbStr = substr($dbStr, 0, $p);
+		}
+		if(!preg_match('/^[0-9,]+$/', $dbStr)) $dbStr = 'all';
 		return $dbStr;
 	}
 

@@ -9,7 +9,7 @@
 				<a href="https://biokic.asu.edu" target="_blank" title="Biodiversity Knowledge Integration Center"><img src="<?php echo $CLIENT_ROOT; ?>/images/layout/logo-asu-biokic.png" style="width:210px" /></a>
 			</p>
 			<br /><br />
-			<div style="text-align:center;margin-bottom:15px;margin-left:20px">This project made possible by National Science Foundation Awards:
+			<div style="text-align:center;margin-bottom:15px;margin-left:20px">This project made possible by U.S. National Science Foundation Awards:
 				<a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2102006" target="_blank">2102006</a>,
 				<a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2101929" target="_blank">2101929</a>,
 				<a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2101908" target="_blank">2101908</a>,

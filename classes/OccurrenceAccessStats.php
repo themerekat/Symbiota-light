@@ -91,16 +91,18 @@ class OccurrenceAccessStats extends Manager{
 
 	public function insertAccessOccurrence($occurAccessID, $occid){
 		$status = false;
-		$sql = 'INSERT INTO omoccuraccesslink(occurAccessID, occid) VALUES(?, ?)';
-		$stmt = $this->conn->stmt_init();
-		$stmt->prepare($sql);
-		$stmt->bind_param('ii', $occurAccessID, $occid);
-		if($stmt->execute()) $status = true;
-		else{
-			$this->errorMessage = date('Y-m-d H:i:s').' - ERROR creating access occurrence instance: '.$this->conn->error;
-			$this->logOrEcho($this->errorMessage);
+		if(!empty($GLOBALS['STORE_STATISTICS'])){
+			$sql = 'INSERT INTO omoccuraccesslink(occurAccessID, occid) VALUES(?, ?)';
+			$stmt = $this->conn->stmt_init();
+			$stmt->prepare($sql);
+			$stmt->bind_param('ii', $occurAccessID, $occid);
+			if($stmt->execute()) $status = true;
+			else{
+				$this->errorMessage = date('Y-m-d H:i:s').' - ERROR creating access occurrence instance: '.$this->conn->error;
+				$this->logOrEcho($this->errorMessage);
+			}
+			$stmt->close();
 		}
-		$stmt->close();
 		return $status;
 	}
 

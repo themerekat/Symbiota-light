@@ -126,7 +126,10 @@ header("Content-Type: text/html; charset=".$CHARSET);
 			However, in the future we hope to include collections from new PCC-affiliated institutions, and to partner with other
 			institutions worldwide to serve their data through the PCC portal.</p>
 
-			<p>For more information about pteridophytes or the PCC, please visit our <a href=https://pteridophytes.berkeley.edu>PCC website</a> and follow us on Facebook and Twitter.</p>
+			<p>For more information about pteridophytes or the PCC, please visit our <a href="https://pteridophytes.berkeley.edu" target="_blank">
+			PCC website</a> and follow us on <a href="https://www.facebook.com/pteridophyteTCN/" target="_blank">Facebook</a>
+			 and <a href="https://twitter.com/pterido_tcn" target="_blank">Twitter</a>. For questions, comments, or to join the PCC portal, contact 
+			the Symbiota Support Hub (<a href="mailto:help@symbiota.org?subject=Pteridophyte Portal Feedback">help@symbiota.org</a>).</p>
 		</div>
 	</div>
 	<?php

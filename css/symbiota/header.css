@@ -79,10 +79,6 @@ header a:hover {
   text-decoration: none;
 }
 
-.image-container {
-  width: 100%;
-}
-
 .image-container img {
   width: 100%;
   height: auto;

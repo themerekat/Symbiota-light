@@ -41,7 +41,7 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 			</nav>
 			<div class="top-brand">
 				<div class="image-container">
-					<img src="<?= $CLIENT_ROOT ?>/images/layout/pcc_logo.svg" alt="PCC logo">
+					<img src="<?= $CLIENT_ROOT ?>/images/layout/PCC_logo_DigitalfiddleheadTransp.png" alt="PCC digial fiddlehead logo">
 				</div>
 				<div class="brand-name">
 					<h1>Pteridophyte Collections Consortium</h1>

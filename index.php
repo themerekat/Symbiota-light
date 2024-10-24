@@ -98,6 +98,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 		PCC website</a> and follow us on <a href="https://www.facebook.com/pteridophyteTCN/" target="_blank">Facebook</a>
 			and <a href="https://twitter.com/pterido_tcn" target="_blank">Twitter</a>. For questions, comments, or to join the PCC portal, contact 
 		the Symbiota Support Hub (<a href="mailto:help@symbiota.org?subject=Pteridophyte Portal Feedback">help@symbiota.org</a>).</p>
+		<img id="pcc_logo" src="<?= $CLIENT_ROOT ?>/images/layout/PCC_logo_fiddlehead.png" alt="">
 		
 	</main>
 	<?php

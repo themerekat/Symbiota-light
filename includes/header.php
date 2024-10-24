@@ -45,7 +45,7 @@ $collectionSearchPage = $SHOULD_USE_HARVESTPARAMS ? '/collections/index.php' : '
 				</div>
 				<div class="brand-name">
 					<h1>Pteridophyte Collections Consortium</h1>
-					<h2>Ferns, lycophytes, and thier extinct free-sporing relatives</h2>
+					<h2>Ferns, lycophytes, and their extinct free-sporing relatives</h2>
 				</div>
 			</div>
 		</div>

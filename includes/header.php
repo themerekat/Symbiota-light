@@ -20,24 +20,19 @@ if (top.frames.length!=0)
 						<span style="">
 							Welcome <?php echo $USER_DISPLAY_NAME; ?>!
 						</span>
-						<span style="margin-left:5px;">
-							<a href="<?php echo $CLIENT_ROOT; ?>/profile/viewprofile.php">My Profile</a>
+						<span style="white-space: nowrap;" class="button button-tertiary bottom-breathing-room-rel">
+							<a href="<?= $CLIENT_ROOT ?>/profile/viewprofile.php"><?= $LANG['H_MY_PROFILE'] ?></a>
 						</span>
-						<span style="margin-left:5px;">
-							<a href="<?php echo $CLIENT_ROOT; ?>/profile/index.php?submit=logout">Logout</a>
+						<span style="white-space: nowrap;" class="button button-secondary bottom-breathing-room-rel">
+							<a href="<?= $CLIENT_ROOT ?>/profile/index.php?submit=logout"><?= $LANG['H_LOGOUT'] ?></a>
 						</span>
 						<?php
 					}
 					else{
 						?>
-						<span style="">
-							<a href="<?php echo $CLIENT_ROOT.'/profile/index.php?refurl='.$_SERVER['SCRIPT_NAME'].'?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES); ?>">
-								Log In
-							</a>
-						</span>
-						<span style="margin-left:5px;">
-							<a href="<?php echo $CLIENT_ROOT; ?>/profile/newprofile.php">
-								New Account
+						<span class="button button-secondary">
+							<a href="<?= $CLIENT_ROOT . "/profile/index.php?refurl=" . htmlspecialchars($_SERVER['SCRIPT_NAME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "?" . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES); ?>">
+								<?= $LANG['H_LOGIN'] ?>
 							</a>
 						</span>
 						<?php
